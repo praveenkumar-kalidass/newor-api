@@ -4,14 +4,19 @@
   "private": true,
   "scripts": {
     "start": "node ./app.js --port=3000",
-    "start:dev": "nodemon ./app.js --port=3000"
+    "start:dev": "nodemon ./app.js --port=3000",
+    "migration": "sequelize db:migrate",
+    "migration:create": "sequelize migration:create",
+    "migrate:undo": "sequelize db:migrate:undo"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "express": "~4.16.1",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "sequelize": "^6.16.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "sequelize-cli": "^6.4.1"
   }
 }
