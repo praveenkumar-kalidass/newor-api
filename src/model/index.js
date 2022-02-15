@@ -4,8 +4,8 @@ const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const { getDatabaseConfig } = require('../../config');
 const db = {};
-
 const config = getDatabaseConfig();
+
 let sequelize = new Sequelize(
   config.name,
   config.username,

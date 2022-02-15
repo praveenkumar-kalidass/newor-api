@@ -1,6 +1,5 @@
-const sequelize = require('./sequelize.json');
-const config = require('./config.json');
-const database = sequelize[config.env];
+const sequelize = require('./database.json');
+const database = sequelize[process.env.ENV];
 
 const getDatabaseConfig = () => ({
   username: database.username,
