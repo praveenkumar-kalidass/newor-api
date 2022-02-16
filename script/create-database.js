@@ -19,6 +19,11 @@ pool.connect(async (connectionErr, client) => {
   }
 
   try {
+    const result = await client.query(`SELECT datname FROM pg_database WHERE datname='${config.name}'`);
+    if (result.rows.length) {
+      console.log(`Database "${config.name}" already exists. Skipping database creation.`);
+      process.exit(0);
+    }
     await client.query(`CREATE DATABASE ${config.name}`);
     await client.query(`GRANT ALL PRIVILEGES ON DATABASE "${config.name}" to ${config.username}`);
     console.log(`Database "${config.name}" created and assigned user ${config.username} successfully.`);

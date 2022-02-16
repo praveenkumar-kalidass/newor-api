@@ -19,6 +19,11 @@ pool.connect(async (connectionErr, client) => {
   }
 
   try {
+    const result = await client.query(`SELECT USENAME FROM pg_user WHERE USENAME='${config.username}'`);
+    if (result.rows.length) {
+      console.log(`User "${config.username}" already exists. Skipping user creation.`);
+      process.exit(0);
+    }
     await client.query(`CREATE USER ${config.username} WITH PASSWORD '${config.password}'`);
     console.log(`User "${config.username}" created successfully.`);
     process.exit(0);
