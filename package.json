@@ -5,8 +5,8 @@
   "scripts": {
     "start": "node ./app.js --port=3000",
     "start:dev": "nodemon ./app.js --port=3000",
-    "db:user": "source .envrc && node ./script/create-user.js",
-    "db:create": "source .envrc && node ./script/create-database.js",
+    "db:user": "node ./script/create-user.js",
+    "db:create": "node ./script/create-database.js",
     "migration": "sequelize db:migrate",
     "migration:create": "sequelize migration:create",
     "migration:undo": "sequelize db:migrate:undo"

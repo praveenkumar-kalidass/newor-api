@@ -4,7 +4,7 @@ const database = sequelize[process.env.ENV];
 const getDatabaseConfig = () => ({
   username: database.username,
   password: database.password,
-  name: database.name,
+  database: database.database,
   host: database.host,
   dialect: database.dialect,
 });

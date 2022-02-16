@@ -2,7 +2,7 @@
   "dev": {
     "username": "newor_dev",
     "password": "newordev@123",
-    "name": "newor_data_dev",
+    "database": "newor_data_dev",
     "host": "127.0.0.1",
     "dialect": "postgres",
     "migrationStorage": "sequelize",

@@ -1,7 +1,8 @@
+const path = require('path');
 const config = require('./config/config.json');
 
 module.exports = {
-  'env': config.env,
+  'env': process.env.ENV,
   'config': path.resolve('config', 'database.json'),
   'models-path': path.resolve('src', 'model'),
   'seeders-path': path.resolve('src', 'seeder'),
