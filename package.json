@@ -9,12 +9,17 @@
     "db:create": "node ./script/create-database.js",
     "migration": "sequelize db:migrate",
     "migration:create": "sequelize migration:create",
-    "migration:undo": "sequelize db:migrate:undo"
+    "migration:undo": "sequelize db:migrate:undo",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:report": "jest --silent --coverage"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "express": "~4.16.1",
+    "jest": "^27.5.1",
     "morgan": "~1.9.1",
+    "password-hash": "^1.2.2",
     "pg": "^8.7.3",
     "sequelize": "^6.16.1"
   },

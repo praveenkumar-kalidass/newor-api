@@ -3,6 +3,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 var http = require('http');
 
+const router = require('./src/route');
+
 const app = express();
 
 app.use(logger('dev'));
@@ -20,6 +22,8 @@ app.set('port', port);
  * Create HTTP server.
  */
 const server = http.createServer(app);
+
+app.use('/api', router);
  
 /**
  * Listen on provided port, on all network interfaces.
