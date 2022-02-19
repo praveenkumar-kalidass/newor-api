@@ -2,6 +2,13 @@
 
 exports[`error should match snapshot 1`] = `
 Object {
+  "BAD_REQUEST": Object {
+    "data": Object {
+      "code": "NEWOR_BAD_REQUEST",
+      "description": "Bad request",
+    },
+    "status": 400,
+  },
   "INTERNAL_SERVER_ERROR": Object {
     "data": Object {
       "code": "NEWOR_INTERNAL_SERVER_ERROR",

@@ -6,23 +6,23 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     firstName: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING(25),
       allowNull: false,
       field: 'first_name',
     },
     lastName: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING(25),
       allowNull: false,
       field: 'last_name',
     },
     email: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING(50),
       allowNull: false,
       unique: true,
       field: 'email',
     },
     password: {
-      type: DataTypes.STRING,
+      type: Sequelize.STRING(15),
       allowNull: false,
       field: 'password',
     },

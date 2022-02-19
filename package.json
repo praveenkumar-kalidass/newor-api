@@ -18,6 +18,7 @@
     "cookie-parser": "~1.4.4",
     "express": "~4.16.1",
     "jest": "^27.5.1",
+    "joi": "^17.6.0",
     "morgan": "~1.9.1",
     "password-hash": "^1.2.2",
     "pg": "^8.7.3",

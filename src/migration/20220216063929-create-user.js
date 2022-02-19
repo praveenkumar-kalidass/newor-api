@@ -10,22 +10,22 @@ module.exports = {
           primaryKey: true,
         },
         firstName: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING(25),
           allowNull: false,
           field: 'first_name',
         },
         lastName: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING(25),
           allowNull: false,
           field: 'last_name',
         },
         email: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING(50),
           allowNull: false,
           field: 'email',
         },
         password: {
-          type: Sequelize.STRING,
+          type: Sequelize.STRING(15),
           allowNull: false,
           field: 'password',
         },

@@ -6,6 +6,13 @@ const errors = {
       description: 'Internal Server error',
     },
   },
+  BAD_REQUEST: {
+    status: 400,
+    data: {
+      code: 'NEWOR_BAD_REQUEST',
+      description: 'Bad request',
+    },
+  }
 };
 
 module.exports = errors;
