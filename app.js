@@ -1,7 +1,7 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-var http = require('http');
+const http = require('http');
 
 const router = require('./src/route');
 

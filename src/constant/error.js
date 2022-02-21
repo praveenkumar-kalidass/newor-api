@@ -12,7 +12,7 @@ const errors = {
       code: 'NEWOR_BAD_REQUEST',
       description: 'Bad request',
     },
-  }
+  },
 };
 
 module.exports = errors;
