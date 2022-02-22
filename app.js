@@ -2,7 +2,10 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const http = require('http');
+const swagger = require('swagger-ui-express');
+const swaggerDoc = require('swagger-jsdoc');
 
+const swaggerConfig = require('./config/swagger.json');
 const router = require('./src/route');
 
 const app = express();
@@ -17,14 +20,15 @@ app.use(cookieParser());
  */
 const port = parseInt(process.env.PORT || '3000');
 app.set('port', port);
- 
+
 /**
  * Create HTTP server.
  */
 const server = http.createServer(app);
 
+app.use('/docs', swagger.serve, swagger.setup(swaggerDoc(swaggerConfig)))
 app.use('/api', router);
- 
+
 /**
  * Listen on provided port, on all network interfaces.
  */

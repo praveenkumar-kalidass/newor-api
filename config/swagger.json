@@ -1,0 +1,12 @@
+{
+  "definition": {
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Newor API",
+      "version": "1.0.0"
+    }
+  },
+  "apis": [
+    "./src/route/User.js"
+  ]
+}
