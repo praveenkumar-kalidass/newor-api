@@ -1,4 +1,5 @@
 const sequelize = require('./database.json');
+
 const database = sequelize[process.env.ENV];
 
 const getDatabaseConfig = () => ({

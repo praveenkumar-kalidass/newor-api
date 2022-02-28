@@ -18,7 +18,7 @@ app.use(cookieParser());
 /**
  * Get port from environment and store in Express.
  */
-const port = parseInt(process.env.PORT || '3000');
+const port = parseInt(process.env.PORT || '3000', 10);
 app.set('port', port);
 
 /**
@@ -26,7 +26,7 @@ app.set('port', port);
  */
 const server = http.createServer(app);
 
-app.use('/docs', swagger.serve, swagger.setup(swaggerDoc(swaggerConfig)))
+app.use('/docs', swagger.serve, swagger.setup(swaggerDoc(swaggerConfig)));
 app.use('/api', router);
 
 /**
@@ -34,15 +34,15 @@ app.use('/api', router);
  */
 server.listen(port);
 server.on('error', (error) => {
-  const bind = 'Port ' + port;
+  const bind = `Port ${port}`;
 
   switch (error.code) {
     case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+      console.error(`${bind} requires elevated privileges`);
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+      console.error(`${bind} is already in use`);
       process.exit(1);
       break;
     default:
@@ -51,8 +51,8 @@ server.on('error', (error) => {
 });
 server.on('listening', () => {
   const addr = server.address();
-  const bind = 'Port ' + addr.port;
-  console.log('Newor-api, Listening on ' + bind);
+  const bind = `Port ${addr.port}`;
+  console.log(`Newor-api, Listening on ${bind}`);
 });
 
 module.exports = app;

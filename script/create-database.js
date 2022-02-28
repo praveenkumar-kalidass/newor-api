@@ -1,5 +1,7 @@
 const { Pool } = require('pg');
+
 const { getDatabaseConfig } = require('../config');
+
 const config = getDatabaseConfig();
 
 const pool = new Pool({
