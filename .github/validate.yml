@@ -1,0 +1,36 @@
+name: Validate
+on:
+  push:
+    branches:
+      - master
+jobs:
+  lint:
+    name: lint
+    runs-on: macos-latest
+      steps:
+      - name: git checkout
+        uses: actions/checkout@v2
+      - name: validate lint
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: yarn install
+      - run: yarn lint
+  test:
+    name: test
+    needs: lint
+    runs-on: macos-latest
+      steps:
+      - name: git checkout
+        uses: actions/checkout@v2
+      - name: run unit tests
+        uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+      - run: yarn install
+      - run: yarn test:report
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          path: coverage/
