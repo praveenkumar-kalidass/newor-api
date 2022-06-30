@@ -1,8 +1,11 @@
+const passwordHash = require('password-hash');
+
 const userService = require('./User');
 const userDao = require('../dao/User');
 
 jest.mock('../dao/User', () => ({
   save: jest.fn(),
+  fetch: jest.fn(),
 }));
 
 describe('User Service', () => {
@@ -22,6 +25,27 @@ describe('User Service', () => {
       userDao.save.mockRejectedValueOnce(Error('User error'));
 
       await expect(userService.signup({ username: 'Test', password: 'test@123' })).rejects.toStrictEqual({
+        status: 500,
+        data: {
+          code: 'NEWOR_INTERNAL_SERVER_ERROR',
+          description: 'Internal Server error',
+        },
+      });
+    });
+  });
+
+  describe('login', () => {
+    it('should successfully login user', async () => {
+      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123') };
+      userDao.fetch.mockResolvedValueOnce({ dataValues: expectedResponse });
+
+      await expect(userService.login({ email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
+    });
+
+    it('should throw error when login user', async () => {
+      userDao.fetch.mockRejectedValueOnce(Error('User error'));
+
+      await expect(userService.login({ email: 'test@test.com', password: 'test@123' })).rejects.toStrictEqual({
         status: 500,
         data: {
           code: 'NEWOR_INTERNAL_SERVER_ERROR',

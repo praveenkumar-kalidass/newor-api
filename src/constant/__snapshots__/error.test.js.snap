@@ -16,5 +16,15 @@ Object {
     },
     "status": 500,
   },
+  "REDIRECT": Object {
+    "status": 307,
+  },
+  "UNAUTHORIZED": Object {
+    "data": Object {
+      "code": "NEWOR_UNAUTHORIZED",
+      "description": "Unauthorized",
+    },
+    "status": 401,
+  },
 }
 `;

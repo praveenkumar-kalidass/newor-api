@@ -1,4 +1,5 @@
 const joi = require('joi');
+const OAuthServer = require('oauth2-server');
 
 const userSchema = require('../schema/User');
 const userService = require('../service/User');
@@ -23,6 +24,54 @@ const signupV1 = async (request, response) => {
   }
 };
 
+const oAuth = new OAuthServer({
+  model: {
+    getClient: () => ({
+      id: 'dummy_client_id',
+      grants: ['password', 'authorization_code', 'refresh_token'],
+      redirectUris: ['authorize'],
+    }),
+    saveAuthorizationCode: (code) => code,
+  },
+  allowEmptyState: true,
+  requireClientAuthentication: { password: false },
+});
+
+const loginV1 = async (request, response) => {
+  try {
+    console.log('Initiating user login v1 api.');
+    await userSchema.loginV1.validateAsync(request.body);
+    const oauthRequest = new OAuthServer.Request(request);
+    const oauthResponse = new OAuthServer.Response(response);
+    await oAuth.authorize(oauthRequest, oauthResponse, {
+      authenticateHandler: {
+        handle: async (req) => {
+          try {
+            const { email, password } = req.body;
+            const user = await userService.login({ email, password });
+            return user;
+          } catch (error) {
+            return null;
+          }
+        },
+      },
+    });
+    console.log('Redirecting to authorize user login.');
+    response.set(oauthResponse.headers);
+    response.redirect(neworError.REDIRECT.status, oauthResponse.headers.location);
+  } catch (error) {
+    const { BAD_REQUEST } = neworError;
+    if (joi.isError(error)) {
+      console.error('Error while validating user login v1 request. Error: ', error);
+      response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
+      return;
+    }
+    console.error('Error while login for user. Error: ', error);
+    response.status(error.status).send(error.data);
+  }
+};
+
 module.exports = {
   signupV1,
+  loginV1,
 };

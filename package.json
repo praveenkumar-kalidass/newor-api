@@ -21,6 +21,7 @@
     "jest": "^27.5.1",
     "joi": "^17.6.0",
     "morgan": "~1.9.1",
+    "oauth2-server": "^3.1.1",
     "password-hash": "^1.2.2",
     "pg": "^8.7.3",
     "sequelize": "^6.16.1",
@@ -32,6 +33,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "eslint-plugin-jest": "^26.1.1",
+    "node-mocks-http": "^1.11.0",
     "nodemon": "^2.0.15",
     "sequelize-cli": "^6.4.1"
   }

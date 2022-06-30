@@ -13,6 +13,16 @@ const errors = {
       description: 'Bad request',
     },
   },
+  UNAUTHORIZED: {
+    status: 401,
+    data: {
+      code: 'NEWOR_UNAUTHORIZED',
+      description: 'Unauthorized',
+    },
+  },
+  REDIRECT: {
+    status: 307,
+  },
 };
 
 module.exports = errors;
