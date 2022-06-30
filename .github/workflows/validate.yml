@@ -4,16 +4,12 @@ on:
     branches:
       - master
 jobs:
-  checkout:
-    name: checkout
-    runs-on: macos-latest
-    steps:
-      - name: git checkout
-        uses: actions/checkout@v2
   lint:
     name: lint
     runs-on: macos-latest
     steps:
+      - name: git checkout
+        uses: actions/checkout@v2
       - name: validate lint
         uses: actions/setup-node@v1
         with:
@@ -25,6 +21,8 @@ jobs:
     needs: lint
     runs-on: macos-latest
     steps:
+      - name: git checkout
+        uses: actions/checkout@v2
       - name: run unit tests
         uses: actions/setup-node@v1
         with:
