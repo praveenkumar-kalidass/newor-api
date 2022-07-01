@@ -10,11 +10,13 @@ jobs:
     steps:
       - name: git checkout
         uses: actions/checkout@v2
+      - name: ls
+        run: ls
       - name: copy file via ssh password
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.DEV_EC2_HOSTNAME }}
           username: ${{ secrets.DEV_EC2_USERNAME }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
-          source: "./"
+          source: "./*"
           target: "/newor/newor-api"
