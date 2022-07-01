@@ -3,7 +3,7 @@
     "username": "newor_dev",
     "password": "newordev@123",
     "database": "newor_data_dev",
-    "host": "127.0.0.1",
+    "host": "postgres",
     "dialect": "postgres",
     "migrationStorage": "sequelize",
     "seederStorage": "sequelize"

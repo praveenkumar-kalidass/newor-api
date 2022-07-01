@@ -7,6 +7,7 @@ const config = getDatabaseConfig();
 const pool = new Pool({
   user: process.env.DATABASE_SUPERUSER,
   password: process.env.DATABASE_SUPERPASSWORD,
+  host: process.env.DATABASE_HOST,
 });
 
 pool.on('error', (poolErr) => {
