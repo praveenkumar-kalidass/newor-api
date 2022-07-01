@@ -18,5 +18,5 @@ jobs:
           host: ${{ secrets.DEV_EC2_HOSTNAME }}
           username: ${{ secrets.DEV_EC2_USERNAME }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
-          source: "./*"
-          target: "/newor/newor-api"
+          source: "./"
+          target: "~/newor/newor-api"
