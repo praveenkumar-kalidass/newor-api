@@ -33,6 +33,7 @@ jobs:
           target: "~/newor/newor-api"
   deploy:
     name: deploy
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: docker compose
