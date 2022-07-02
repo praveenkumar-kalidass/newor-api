@@ -16,6 +16,8 @@ jobs:
           host: ${{ secrets.DEV_EC2_HOSTNAME }}
           username: ${{ secrets.DEV_EC2_USERNAME }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          port: 22
+          debug: true
           script: rm -rf newor
       - name: environment config
         run: |
