@@ -10,16 +10,12 @@ jobs:
     steps:
       - name: git checkout
         uses: actions/checkout@v2
-      - name: save ssh key
-        run: |
-          echo "$DEV_EC2_PRIVATE_KEY" > ./newor_dev.pem
-          chmod 600 ./newor_dev.pem
       - name: clean
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEV_EC2_HOSTNAME }}
           username: ${{ secrets.DEV_EC2_USERNAME }}
-          key: newor_dev.pem
+          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
           script: rm -rf ~/newor
       - name: environment config
         run: |
