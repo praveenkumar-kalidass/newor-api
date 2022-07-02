@@ -13,9 +13,10 @@ jobs:
       - name: save ssh key
         run: |
           echo "$DEV_EC2_PRIVATE_KEY" > ./newor_dev.pem
-          ls
+          chmod 600 ./newor_dev.pem
+          cat ~/.ssh/known_hosts
       - name: clean
-        uses: appleboy/ssh-action@v0.1.0
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.DEV_EC2_HOSTNAME }}
           username: ${{ secrets.DEV_EC2_USERNAME }}
