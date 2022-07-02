@@ -13,6 +13,7 @@ jobs:
       - name: save ssh key
         run: |
           echo "$DEV_EC2_PRIVATE_KEY" > ./newor_dev.pem
+          ls
       - name: clean
         uses: appleboy/ssh-action@v0.1.0
         with:
