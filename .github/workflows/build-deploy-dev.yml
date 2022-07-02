@@ -11,14 +11,12 @@ jobs:
       - name: git checkout
         uses: actions/checkout@v2
       - name: clean
-        uses: appleboy/ssh-action@v0.1.4
+        uses: appleboy/ssh-action@v0.1.0
         with:
           host: ${{ secrets.DEV_EC2_HOSTNAME }}
           username: ${{ secrets.DEV_EC2_USERNAME }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
-          port: 22
-          debug: true
-          script: rm -rf newor
+          script: rm -rf ~/newor
       - name: environment config
         run: |
           echo "export ENV=dev\nexport PORT=3000\nexport POSTGRES_USER=$DEV_POSTGRES_USER\nexport POSTGRES_PASSWORD=$DEV_POSTGRES_PASSWORD\nexport DATABASE_HOST=postgres\nexport DATABASE_SUPERUSER=$DEV_POSTGRES_USER\nexport DATABASE_SUPERPASSWORD=$DEV_POSTGRES_PASSWORD" > .envrc
