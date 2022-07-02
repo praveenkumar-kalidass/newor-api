@@ -11,6 +11,10 @@ jobs:
       - name: git checkout
         uses: actions/checkout@v2
       - name: clean
+        env:
+          DEV_EC2_PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          DEV_EC2_USERNAME: ${{ secrets.DEV_EC2_USERNAME }}
+          DEV_EC2_HOSTNAME: ${{ secrets.DEV_EC2_HOSTNAME }}
         run: |
           echo "$DEV_EC2_PRIVATE_KEY" > newor_dev.pem && chmod 400 newor_dev.pem
           ls -a
