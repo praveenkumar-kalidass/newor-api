@@ -6,31 +6,40 @@ on:
 jobs:
   build:
     name: build
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: git checkout
         uses: actions/checkout@v2
       - name: clean
-        run: |
-          ssh -i "$DEV_EC2_PRIVATE_KEY" "$DEV_EC2_USERNAME@$DEV_EC2_HOSTNAME"
-          rm -rf ~/newor
-          exit
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.DEV_EC2_HOSTNAME }}
+          username: ${{ secrets.DEV_EC2_USERNAME }}
+          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          script: rm -rf newor
       - name: environment config
         run: |
           echo "export ENV=dev\nexport PORT=3000\nexport POSTGRES_USER=$DEV_POSTGRES_USER\nexport POSTGRES_PASSWORD=$DEV_POSTGRES_PASSWORD\nexport DATABASE_HOST=postgres\nexport DATABASE_SUPERUSER=$DEV_POSTGRES_USER\nexport DATABASE_SUPERPASSWORD=$DEV_POSTGRES_PASSWORD" > .envrc
       - name: database config
         run: |
           echo "{\"dev\":{\"username\":\"$DEV_DATABASE_USER\",\"password\":\"$DEV_DATABASE_PASSWORD\",\"database\":\"$DEV_DATABASE_NAME\",\"host\":\"postgres\",\"dialect\":\"postgres\",\"migrationStorage\":\"sequelize\",\"seederStorage\":\"sequelize\"}}" > ./config/database.json
-      - name: copy files
-        run: |
-          scp -i $DEV_EC2_PRIVATE_KEY ./* $DEV_EC2_USERNAME@$DEV_EC2_HOSTNAME:~/newor/newor-api
+      - name: copy file via ssh password
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DEV_EC2_HOSTNAME }}
+          username: ${{ secrets.DEV_EC2_USERNAME }}
+          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          source: "./,!.git,!.github"
+          target: "~/newor/newor-api"
   deploy:
     name: deploy
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: docker compose
-        run: |
-          ssh -i $DEV_EC2_PRIVATE_KEY $DEV_EC2_USERNAME@$DEV_EC2_HOSTNAME
-          cd ~/newor/newor-api
-          docker-compose up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEV_EC2_HOSTNAME }}
+          username: ${{ secrets.DEV_EC2_USERNAME }}
+          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          script: docker-compose up
