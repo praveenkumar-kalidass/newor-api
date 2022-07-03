@@ -52,6 +52,10 @@ jobs:
           scp -r -i newor_dev.pem ./* ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api
   deploy:
     name: deploy
+    env:
+      DEV_EC2_PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+      DEV_EC2_USERNAME: ${{ secrets.DEV_EC2_USERNAME }}
+      DEV_EC2_HOSTNAME: ${{ secrets.DEV_EC2_HOSTNAME }}
     needs: build
     runs-on: macos-latest
     steps:
