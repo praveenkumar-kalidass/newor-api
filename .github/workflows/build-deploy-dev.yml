@@ -6,45 +6,57 @@ on:
 jobs:
   build:
     name: build
-    runs-on: ubuntu-latest
+    env:
+      DEV_EC2_PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+      DEV_EC2_USERNAME: ${{ secrets.DEV_EC2_USERNAME }}
+      DEV_EC2_HOSTNAME: ${{ secrets.DEV_EC2_HOSTNAME }}
+      DEV_POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
+      DEV_POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
+      DEV_DATABASE_NAME: ${{ secrets.DEV_DATABASE_NAME }}
+      DEV_DATABASE_USER: ${{ secrets.DEV_DATABASE_USER }}
+      DEV_DATABASE_PASSWORD: ${{ secrets.DEV_DATABASE_PASSWORD }}
+    runs-on: macos-latest
     steps:
-      - name: git checkout
-        uses: actions/checkout@v2
       - name: clean
-        env:
-          DEV_EC2_PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
-          DEV_EC2_USERNAME: ${{ secrets.DEV_EC2_USERNAME }}
-          DEV_EC2_HOSTNAME: ${{ secrets.DEV_EC2_HOSTNAME }}
         run: |
           echo "$DEV_EC2_PRIVATE_KEY" > newor_dev.pem && chmod 400 newor_dev.pem
-          ls -a
-          echo "$DEV_EC2_PRIVATE_KEY"
-          cat newor_dev.pem
-          ssh -o StrictHostKeyChecking=no -i newor_dev.pem ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}
-          rm -rf ~/newor-api
+          ssh -i newor_dev.pem ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}
+          rm -rf ~/newor/newor-api
+          mkdir -p ~/newor/newor-api
       - name: environment config
         run: |
-          echo "export ENV=dev\nexport PORT=3000\nexport POSTGRES_USER=$DEV_POSTGRES_USER\nexport POSTGRES_PASSWORD=$DEV_POSTGRES_PASSWORD\nexport DATABASE_HOST=postgres\nexport DATABASE_SUPERUSER=$DEV_POSTGRES_USER\nexport DATABASE_SUPERPASSWORD=$DEV_POSTGRES_PASSWORD" > .envrc
+          echo "export ENV=dev
+          export PORT=3000
+          export POSTGRES_USER=$DEV_POSTGRES_USER
+          export POSTGRES_PASSWORD=$DEV_POSTGRES_PASSWORD
+          export DATABASE_HOST=postgres
+          export DATABASE_SUPERUSER=$DEV_POSTGRES_USER
+          export DATABASE_SUPERPASSWORD=$DEV_POSTGRES_PASSWORD" > .envrc
       - name: database config
         run: |
-          echo "{\"dev\":{\"username\":\"$DEV_DATABASE_USER\",\"password\":\"$DEV_DATABASE_PASSWORD\",\"database\":\"$DEV_DATABASE_NAME\",\"host\":\"postgres\",\"dialect\":\"postgres\",\"migrationStorage\":\"sequelize\",\"seederStorage\":\"sequelize\"}}" > ./config/database.json
-      - name: copy file via ssh password
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.DEV_EC2_HOSTNAME }}
-          username: ${{ secrets.DEV_EC2_USERNAME }}
-          key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
-          source: "./,!.git,!.github,!newor_dev.pem"
-          target: "~/newor/newor-api"
+          echo "{
+            \"dev\":{
+              \"username\":\"$DEV_DATABASE_USER\",
+              \"password\":\"$DEV_DATABASE_PASSWORD\",
+              \"database\":\"$DEV_DATABASE_NAME\",
+              \"host\":\"postgres\",
+              \"dialect\":\"postgres\",
+              \"migrationStorage\":\"sequelize\",
+              \"seederStorage\":\"sequelize\"
+            }
+          }" > ./config/database.json
+      - name: copy files
+        run: |
+          rm -rf ./newor-api/.git
+          rm -rf ./newor-api/.github
+          scp -i newer_dev.pem ./newor-api ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api
   deploy:
     name: deploy
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: docker compose
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.DEV_EC2_HOSTNAME }}
-          username: ${{ secrets.DEV_EC2_USERNAME }}
-          key_path: ./newor_dev.pem
-          script: docker-compose up
+        run: |
+          ssh -i newor_dev.pem ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}
+          cd ~/newor/newor-api
+          docker-compose up
