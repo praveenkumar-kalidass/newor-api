@@ -48,7 +48,7 @@ jobs:
           }" > config/database.json
       - name: copy files
         run: |
-          scp -i newor_dev.pem ./* ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api
+          scp -r -i newor_dev.pem ./* ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api
   deploy:
     name: deploy
     needs: build
