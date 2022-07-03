@@ -24,6 +24,7 @@ jobs:
         run: |
           echo "$DEV_EC2_PRIVATE_KEY" > newor_dev.pem && chmod 400 newor_dev.pem
           ssh -o StrictHostKeyChecking=no -i newor_dev.pem ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME} '
+            cd ~/newor/newor-api
             docker-compose down
             sudo rm -rf ~/newor && mkdir -p ~/newor/newor-api
           '
