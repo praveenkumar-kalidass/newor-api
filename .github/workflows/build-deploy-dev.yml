@@ -50,6 +50,9 @@ jobs:
       - name: copy files
         run: |
           scp -r -i newor_dev.pem ./* ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api
+          scp -i newor_dev.pem ./.envrc ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api/.envrc
+          scp -i newor_dev.pem ./.dockerignore ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api/.dockerignore
+          scp -i newor_dev.pem ./.sequelizerc ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api/.sequelizerc
   deploy:
     name: deploy
     env:
