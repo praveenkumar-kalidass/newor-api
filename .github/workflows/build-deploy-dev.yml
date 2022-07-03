@@ -17,6 +17,8 @@ jobs:
       DEV_DATABASE_PASSWORD: ${{ secrets.DEV_DATABASE_PASSWORD }}
     runs-on: macos-latest
     steps:
+      - name: git checkout
+        uses: actions/checkout@v2
       - name: clean
         run: |
           echo "$DEV_EC2_PRIVATE_KEY" > newor_dev.pem && chmod 400 newor_dev.pem
@@ -34,7 +36,6 @@ jobs:
           export DATABASE_SUPERPASSWORD=$DEV_POSTGRES_PASSWORD" > .envrc
       - name: database config
         run: |
-          ls
           echo "{
             \"dev\":{
               \"username\":\"$DEV_DATABASE_USER\",
