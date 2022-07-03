@@ -23,8 +23,7 @@ jobs:
         run: |
           echo "$DEV_EC2_PRIVATE_KEY" > newor_dev.pem && chmod 400 newor_dev.pem
           ssh -o StrictHostKeyChecking=no -i newor_dev.pem ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}
-          rm -rf ~/newor/newor-api
-          mkdir -p ~/newor/newor-api
+          rm -rf ~/newor && mkdir -p ~/newor/newor-api
       - name: environment config
         run: |
           echo "export ENV=dev
