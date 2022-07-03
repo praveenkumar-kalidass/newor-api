@@ -10,6 +10,7 @@ jobs:
       DEV_EC2_PRIVATE_KEY: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
       DEV_EC2_USERNAME: ${{ secrets.DEV_EC2_USERNAME }}
       DEV_EC2_HOSTNAME: ${{ secrets.DEV_EC2_HOSTNAME }}
+      DEV_API_PORT: ${{ secrets.DEV_API_PORT }}
       DEV_POSTGRES_USER: ${{ secrets.DEV_POSTGRES_USER }}
       DEV_POSTGRES_PASSWORD: ${{ secrets.DEV_POSTGRES_PASSWORD }}
       DEV_DATABASE_NAME: ${{ secrets.DEV_DATABASE_NAME }}
@@ -28,7 +29,7 @@ jobs:
       - name: environment config
         run: |
           echo "export ENV=dev
-          export PORT=3000
+          export PORT=$DEV_API_PORT
           export POSTGRES_USER=$DEV_POSTGRES_USER
           export POSTGRES_PASSWORD=$DEV_POSTGRES_PASSWORD
           export DATABASE_HOST=postgres
