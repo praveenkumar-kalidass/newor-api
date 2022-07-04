@@ -101,7 +101,9 @@ describe('User Controller', () => {
 
       await userController.loginV1(requestMock, responseMock);
 
-      expect(responseMock.status).toHaveBeenCalledWith(503);
+      expect(responseMock.status).toHaveBeenCalledWith(500);
+      expect(responseMock.status.mock.results[0].value.send)
+        .toHaveBeenCalledWith(neworError.INTERNAL_SERVER_ERROR.data);
     });
 
     it('should send bad request for invalid request', async () => {

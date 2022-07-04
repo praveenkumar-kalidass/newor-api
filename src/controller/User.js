@@ -43,17 +43,11 @@ const loginV1 = async (request, response) => {
     await userSchema.loginV1.validateAsync(request.body);
     const oauthRequest = new OAuthServer.Request(request);
     const oauthResponse = new OAuthServer.Response(response);
+    const { email, password } = request.body;
+    const user = await userService.login({ email, password });
     await oAuth.authorize(oauthRequest, oauthResponse, {
       authenticateHandler: {
-        handle: async (req) => {
-          try {
-            const { email, password } = req.body;
-            const user = await userService.login({ email, password });
-            return user;
-          } catch (error) {
-            return null;
-          }
-        },
+        handle: () => user,
       },
     });
     console.log('Redirecting to authorize user login.');

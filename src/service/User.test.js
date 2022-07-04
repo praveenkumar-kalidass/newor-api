@@ -42,6 +42,31 @@ describe('User Service', () => {
       await expect(userService.login({ email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
     });
 
+    it('should throw user not found error', async () => {
+      userDao.fetch.mockResolvedValueOnce(null);
+
+      await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
+        status: 403,
+        data: {
+          code: 'NEWOR_USER_NOT_FOUND',
+          description: 'User not found.',
+        },
+      });
+    });
+
+    it('should throw invalid credentials error', async () => {
+      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123') };
+      userDao.fetch.mockResolvedValueOnce({ dataValues: expectedResponse });
+
+      await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
+        status: 401,
+        data: {
+          code: 'NEWOR_INVALID_CREDENTIALS',
+          description: 'Invalid credentials.',
+        },
+      });
+    });
+
     it('should throw error when login user', async () => {
       userDao.fetch.mockRejectedValueOnce(Error('User error'));
 

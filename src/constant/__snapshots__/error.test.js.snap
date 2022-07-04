@@ -16,15 +16,27 @@ Object {
     },
     "status": 500,
   },
-  "REDIRECT": Object {
-    "status": 307,
-  },
-  "UNAUTHORIZED": Object {
+  "INVALID_CREDENTIALS": Object {
     "data": Object {
-      "code": "NEWOR_UNAUTHORIZED",
-      "description": "Unauthorized",
+      "code": "NEWOR_INVALID_CREDENTIALS",
+      "description": "Invalid credentials.",
     },
     "status": 401,
   },
+  "REDIRECT": Object {
+    "data": Object {
+      "code": "NEWOR_REDIRECT",
+      "description": "Redirect",
+    },
+    "status": 307,
+  },
+  "USER_NOT_FOUND": Object {
+    "data": Object {
+      "code": "NEWOR_USER_NOT_FOUND",
+      "description": "User not found.",
+    },
+    "status": 403,
+  },
+  "isNeworError": [Function],
 }
 `;

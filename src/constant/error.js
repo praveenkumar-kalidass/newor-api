@@ -1,4 +1,5 @@
 const errors = {
+  isNeworError: (error) => Boolean(error.data && error.data.code.match('NEWOR_')),
   INTERNAL_SERVER_ERROR: {
     status: 500,
     data: {
@@ -13,15 +14,26 @@ const errors = {
       description: 'Bad request',
     },
   },
-  UNAUTHORIZED: {
-    status: 401,
-    data: {
-      code: 'NEWOR_UNAUTHORIZED',
-      description: 'Unauthorized',
-    },
-  },
   REDIRECT: {
     status: 307,
+    data: {
+      code: 'NEWOR_REDIRECT',
+      description: 'Redirect',
+    },
+  },
+  INVALID_CREDENTIALS: {
+    status: 401,
+    data: {
+      code: 'NEWOR_INVALID_CREDENTIALS',
+      description: 'Invalid credentials.',
+    },
+  },
+  USER_NOT_FOUND: {
+    status: 403,
+    data: {
+      code: 'NEWOR_USER_NOT_FOUND',
+      description: 'User not found.',
+    },
   },
 };
 
