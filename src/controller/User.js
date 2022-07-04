@@ -4,6 +4,7 @@ const OAuthServer = require('oauth2-server');
 const userSchema = require('../schema/User');
 const userService = require('../service/User');
 const neworError = require('../constant/error');
+const oauthHelper = require('../helper/oauth');
 
 const signupV1 = async (request, response) => {
   try {
@@ -25,14 +26,7 @@ const signupV1 = async (request, response) => {
 };
 
 const oAuth = new OAuthServer({
-  model: {
-    getClient: () => ({
-      id: 'dummy_client_id',
-      grants: ['password', 'authorization_code', 'refresh_token'],
-      redirectUris: ['authorize'],
-    }),
-    saveAuthorizationCode: (code) => code,
-  },
+  model: oauthHelper.getModel(),
   allowEmptyState: true,
   requireClientAuthentication: { password: false },
 });

@@ -35,6 +35,13 @@ const errors = {
       description: 'User not found.',
     },
   },
+  CLIENT_NOT_FOUND: {
+    status: 403,
+    data: {
+      code: 'NEWOR_CLIENT_NOT_FOUND',
+      description: 'Client not found.',
+    },
+  },
 };
 
 module.exports = errors;

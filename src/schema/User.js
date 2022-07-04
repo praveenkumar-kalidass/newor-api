@@ -13,6 +13,8 @@ const loginV1 = joi.object({
   password: joi.string().alphanum().min(6).max(15)
     .required(),
   client_id: joi.string().max(50).required(),
+  client_secret: joi.string().max(15).required(),
+  grant_type: joi.string().max(50).required(),
   response_type: joi.string().max(50).required(),
 });
 

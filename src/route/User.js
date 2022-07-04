@@ -64,6 +64,11 @@ router.post('/v1/signup', userController.signupV1);
  *              clientId:
  *                type: string
  *                format: uuid
+ *              clientSecret:
+ *                type: string
+ *              grantType:
+ *                type: string
+ *                default: password
  *              responseType:
  *                type: string
  *                default: code
@@ -71,6 +76,8 @@ router.post('/v1/signup', userController.signupV1);
  *              - email
  *              - password
  *              - clientId
+ *              - clientSecret
+ *              - grantType
  *              - responseType
  *    responses:
  *      200:
@@ -83,6 +90,10 @@ router.post('/v1/signup', userController.signupV1);
 router.use('/v1/login', (request, response, next) => {
   request.body.client_id = request.body.clientId;
   delete request.body.clientId;
+  request.body.client_secret = request.body.clientSecret;
+  delete request.body.clientSecret;
+  request.body.grant_type = request.body.grantType;
+  delete request.body.grantType;
   request.body.response_type = request.body.responseType;
   delete request.body.responseType;
   next();
