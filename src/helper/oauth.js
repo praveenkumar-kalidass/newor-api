@@ -1,5 +1,6 @@
 const clientService = require('../service/Client');
 const userService = require('../service/User');
+const authTokenService = require('../service/AuthToken');
 
 const getModel = () => ({
   getClient: async (id, secret) => {
@@ -19,11 +20,14 @@ const getModel = () => ({
       return null;
     }
   },
-  saveToken: (accessToken, client, user) => ({
-    accessToken,
-    client,
-    user,
-  }),
+  saveToken: async (accessToken, client, user) => {
+    try {
+      const token = await authTokenService.persist(accessToken, client, user);
+      return token;
+    } catch (error) {
+      return null;
+    }
+  },
   getRefreshToken: (refreshToken) => ({
     refreshToken,
     client: {},
