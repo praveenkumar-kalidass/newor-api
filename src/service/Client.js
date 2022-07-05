@@ -17,7 +17,11 @@ const authorize = async (client) => {
       const { AUTH_GRANT_TYPE } = constant;
       return {
         ...result.dataValues,
-        grants: [AUTH_GRANT_TYPE.PASSWORD, AUTH_GRANT_TYPE.AUTHORIZATION_CODE, AUTH_GRANT_TYPE.REFRESH_TOKEN],
+        grants: [
+          AUTH_GRANT_TYPE.PASSWORD,
+          AUTH_GRANT_TYPE.AUTHORIZATION_CODE,
+          AUTH_GRANT_TYPE.REFRESH_TOKEN,
+        ],
         redirectUris: ['authorize'],
       };
     }

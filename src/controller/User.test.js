@@ -80,7 +80,7 @@ describe('User Controller', () => {
         email: 'test@gmail.com',
         password: 'qwerty',
         client_id: 'test_client_id',
-        client_secret: 'client_secret',
+        client_secret: 'test_secret',
         grant_type: 'password',
         response_type: 'code',
       },

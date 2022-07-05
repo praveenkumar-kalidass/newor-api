@@ -36,7 +36,7 @@ const loginV1 = async (request, response) => {
     console.log('Initiating user login v1 api.');
     await userSchema.loginV1.validateAsync(request.body);
     const oauthRequest = new OAuthServer.Request(request);
-    const oauthResponse = new OAuthServer.Response(response);
+    const oauthResponse = new OAuthServer.Response(request);
     const { email, password } = request.body;
     const user = await userService.login({ email, password });
     await oAuth.authorize(oauthRequest, oauthResponse, {
@@ -59,7 +59,20 @@ const loginV1 = async (request, response) => {
   }
 };
 
+const authorizeV1 = async (request, response) => {
+  try {
+    const oauthRequest = new OAuthServer.Request(request);
+    const oauthResponse = new OAuthServer.Response(request);
+    const result = await oAuth.token(oauthRequest, oauthResponse, {});
+    response.status(200).send(result);
+  } catch (error) {
+    console.error('Error while authorize for user. Error: ', error);
+    response.status(error.status).send(error.data);
+  }
+};
+
 module.exports = {
   signupV1,
   loginV1,
+  authorizeV1,
 };

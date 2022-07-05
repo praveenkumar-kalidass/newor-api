@@ -19,6 +19,17 @@ const getModel = () => ({
       return null;
     }
   },
+  saveToken: (accessToken, client, user) => ({
+    accessToken,
+    client,
+    user,
+  }),
+  getRefreshToken: (refreshToken) => ({
+    refreshToken,
+    client: {},
+    user: {},
+  }),
+  revokeToken: () => true,
 });
 
 module.exports = {

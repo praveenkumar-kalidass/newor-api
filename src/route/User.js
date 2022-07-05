@@ -1,6 +1,7 @@
 const express = require('express');
 
 const userController = require('../controller/User');
+const constant = require('../constant');
 
 const router = express.Router();
 
@@ -99,5 +100,61 @@ router.use('/v1/login', (request, response, next) => {
   next();
 });
 router.post('/v1/login', userController.loginV1);
+
+/**
+ * @swagger
+ * /api/user/v1/authorize:
+ *  post:
+ *    summary: Authenticate Refresh token
+ *    description: Regenerate Access token using Refresh token
+ *    tags:
+ *      - User
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/x-www-form-urlencoded:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              clientId:
+ *                type: string
+ *                format: uuid
+ *              clientSecret:
+ *                type: string
+ *              grantType:
+ *                default: refresh_token
+ *              refreshToken:
+ *                type: string
+ *            required:
+ *              - clientId
+ *              - clientSecret
+ *              - grantType
+ *              - refreshToken
+ *    responses:
+ *      200:
+ *        description: Authorization success
+ *      401:
+ *        description: Authorization failed
+ */
+router.use('/v1/authorize', (request, response, next) => {
+  if (request.body.grantType === constant.AUTH_GRANT_TYPE.PASSWORD) {
+    request.body.username = request.body.email;
+    delete request.body.email;
+    request.body.response_type = request.body.responseType;
+    delete request.body.responseType;
+  }
+  if (request.body.grantType === constant.AUTH_GRANT_TYPE.REFRESH_TOKEN) {
+    request.body.refresh_token = request.body.refreshToken;
+    delete request.body.refreshToken;
+  }
+  request.body.client_id = request.body.clientId;
+  delete request.body.clientId;
+  request.body.client_secret = request.body.clientSecret;
+  delete request.body.clientSecret;
+  request.body.grant_type = request.body.grantType;
+  delete request.body.grantType;
+  next();
+});
+router.post('/v1/authorize', userController.authorizeV1);
 
 module.exports = router;
