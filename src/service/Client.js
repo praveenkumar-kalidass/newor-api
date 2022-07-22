@@ -12,11 +12,12 @@ const authorize = async (client) => {
       console.log('No client found with id: ', client.id);
       throw neworError.CLIENT_NOT_FOUND;
     }
-    if (!client.secret || passwordHash.verify(client.secret, result.dataValues.secret)) {
+    if (!client.secret || passwordHash.verify(client.secret, result.secret)) {
       console.log('Successfully verified client credentials.');
       const { AUTH_GRANT_TYPE } = constant;
+      delete result.secret;
       return {
-        ...result.dataValues,
+        ...result,
         grants: [
           AUTH_GRANT_TYPE.PASSWORD,
           AUTH_GRANT_TYPE.AUTHORIZATION_CODE,

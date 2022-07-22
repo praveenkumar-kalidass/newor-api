@@ -17,7 +17,7 @@ describe('AuthToken Service', () => {
         client: { id: 'test_client_id' },
         user: { id: 'test_user_id' },
       };
-      authTokenDao.save.mockResolvedValueOnce({ dataValues: { accessToken: 'test_access_token' } });
+      authTokenDao.save.mockResolvedValueOnce({ accessToken: 'test_access_token' });
 
       await expect(authTokenService.persist(
         { accessToken: 'test_access_token' },

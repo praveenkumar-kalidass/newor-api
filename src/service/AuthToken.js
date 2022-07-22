@@ -11,7 +11,7 @@ const persist = async (token, client, user) => {
     });
     console.log('Successfully persisted auth token with client and user data');
     return {
-      ...authToken.dataValues,
+      ...authToken,
       client,
       user,
     };

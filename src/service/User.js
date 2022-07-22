@@ -26,9 +26,10 @@ const login = async (user) => {
       console.log('No user found with email: ', user.email);
       throw neworError.USER_NOT_FOUND;
     }
-    if (passwordHash.verify(user.password, result.dataValues.password)) {
+    if (passwordHash.verify(user.password, result.password)) {
       console.log('Successfully verified user credentials.');
-      return result.dataValues;
+      delete result.password;
+      return result;
     }
     console.log('User credentials verification failed.');
     throw neworError.INVALID_CREDENTIALS;

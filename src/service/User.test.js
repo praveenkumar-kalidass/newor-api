@@ -37,7 +37,7 @@ describe('User Service', () => {
   describe('login', () => {
     it('should successfully login user', async () => {
       const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123') };
-      userDao.fetch.mockResolvedValueOnce({ dataValues: expectedResponse });
+      userDao.fetch.mockResolvedValueOnce(expectedResponse);
 
       await expect(userService.login({ email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
     });
@@ -56,7 +56,7 @@ describe('User Service', () => {
 
     it('should throw invalid credentials error', async () => {
       const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123') };
-      userDao.fetch.mockResolvedValueOnce({ dataValues: expectedResponse });
+      userDao.fetch.mockResolvedValueOnce(expectedResponse);
 
       await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
         status: 401,

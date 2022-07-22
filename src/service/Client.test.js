@@ -20,7 +20,7 @@ describe('Client Service', () => {
         grants: ['password', 'authorization_code', 'refresh_token'],
         redirectUris: ['authorize'],
       };
-      clietDao.fetchBy.mockResolvedValueOnce({ dataValues: expectedResponse });
+      clietDao.fetchBy.mockResolvedValueOnce(expectedResponse);
 
       await expect(clientService.authorize({ id: 'test', secret: 'test@123' })).resolves.toStrictEqual(expectedResponse);
     });
@@ -39,7 +39,7 @@ describe('Client Service', () => {
 
     it('should throw invalid credentials error', async () => {
       const expectedResponse = { id: 'test', secret: passwordHash.generate('test@123') };
-      clietDao.fetchBy.mockResolvedValueOnce({ dataValues: expectedResponse });
+      clietDao.fetchBy.mockResolvedValueOnce(expectedResponse);
 
       await expect(clientService.authorize({ id: 'test', secret: 'test' })).rejects.toStrictEqual({
         status: 401,
