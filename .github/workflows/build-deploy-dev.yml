@@ -1,8 +1,8 @@
 name: Build & Deply Dev
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: [Validate]
+    types: [completed]
 jobs:
   build:
     name: build
@@ -17,6 +17,7 @@ jobs:
       DEV_DATABASE_USER: ${{ secrets.DEV_DATABASE_USER }}
       DEV_DATABASE_PASSWORD: ${{ secrets.DEV_DATABASE_PASSWORD }}
     runs-on: macos-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: git checkout
         uses: actions/checkout@v2
@@ -64,6 +65,7 @@ jobs:
       DEV_EC2_HOSTNAME: ${{ secrets.DEV_EC2_HOSTNAME }}
     needs: build
     runs-on: macos-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: docker compose
         run: |
