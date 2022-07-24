@@ -1,13 +1,20 @@
 const passwordHash = require('password-hash');
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 
+const config = require('../../config/config.json');
 const userDao = require('../dao/User');
 const neworError = require('../constant/error');
 
 const signup = async (user) => {
   try {
     console.log('Initiating signup user.');
+    const id = uuidv4();
+    const verificationToken = jwt.sign({ id }, config.email_verification_token_secret);
     const result = await userDao.save({
       ...user,
+      id,
+      verificationToken,
       password: passwordHash.generate(user.password),
     });
     console.log('Successfully signed up user.');

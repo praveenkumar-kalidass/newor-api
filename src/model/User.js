@@ -28,6 +28,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: 'password',
     },
+    verificationToken: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      field: 'verification_token',
+    },
+    isVerified: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+      field: 'is_verified',
+    },
     createdAt: {
       type: DataTypes.DATE,
       field: 'created_at',

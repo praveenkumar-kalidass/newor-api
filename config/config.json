@@ -1,2 +1,3 @@
 {
+  "email_verification_token_secret": "newordevtoken@123"
 }
