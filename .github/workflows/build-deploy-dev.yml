@@ -51,6 +51,11 @@ jobs:
               \"seederStorage\":\"sequelize\"
             }
           }" > config/database.json
+      - name: app config
+        run: |
+          echo "{
+            \"email_verification_token_secret\":\"$DEV_EMAIL_VERIFICATION_TOKEN_SECRET\",
+          }" > config/config.json
       - name: copy files
         run: |
           scp -r -i newor_dev.pem ./* ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api
