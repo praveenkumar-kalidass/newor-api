@@ -32,7 +32,7 @@ jobs:
           export CONFIG_REPOSITORY=GIT_CONFIG_REPOSITORY
           export DEPLOY_ENV=dev
           export TOKEN=GIT_TOKEN
-          yarn config
+          yarn appconfig
       - name: copy files
         run: |
           scp -r -i newor_dev.pem ./* ${DEV_EC2_USERNAME}@${DEV_EC2_HOSTNAME}:~/newor/newor-api
