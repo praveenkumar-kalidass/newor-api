@@ -28,10 +28,10 @@ jobs:
           '
       - name: get config
         run: |
-          export OWNER=GIT_OWNER
-          export CONFIG_REPOSITORY=GIT_CONFIG_REPOSITORY
+          export OWNER="$GIT_OWNER"
+          export CONFIG_REPOSITORY="$GIT_CONFIG_REPOSITORY"
           export DEPLOY_ENV=dev
-          export TOKEN=GIT_TOKEN
+          export TOKEN="$GIT_TOKEN"
           ls
           yarn && yarn appconfig
       - name: copy files
