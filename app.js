@@ -4,6 +4,7 @@ const logger = require('morgan');
 const http = require('http');
 const swagger = require('swagger-ui-express');
 const swaggerDoc = require('swagger-jsdoc');
+const path = require('path');
 
 const swaggerConfig = require('./config/swagger.json');
 const router = require('./src/route');
@@ -28,6 +29,7 @@ const server = http.createServer(app);
 
 app.use('/docs', swagger.serve, swagger.setup(swaggerDoc(swaggerConfig)));
 app.use('/api', router);
+app.use('/public', express.static(path.join(__dirname, 'public')));
 
 /**
  * Listen on provided port, on all network interfaces.
