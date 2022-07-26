@@ -1,9 +1,9 @@
 {
-  "dev": {
-    "username": "newor_dev",
-    "password": "newordev@123",
-    "database": "newor_data_dev",
-    "host": "postgres",
+  "local": {
+    "username": "username",
+    "password": "password",
+    "database": "database",
+    "host": "localhost",
     "dialect": "postgres",
     "migrationStorage": "sequelize",
     "seederStorage": "sequelize"
