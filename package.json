@@ -17,11 +17,14 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:report": "jest --silent --coverage",
+    "appconfig": "node ./script/get-config.js",
     "lint": "eslint ."
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "express": "~4.16.1",
+    "fs": "^0.0.1-security",
+    "https": "^1.0.0",
     "jest": "^27.5.1",
     "joi": "^17.6.0",
     "jsonwebtoken": "^8.5.1",
@@ -41,6 +44,7 @@
     "eslint-plugin-jest": "^26.1.1",
     "node-mocks-http": "^1.11.0",
     "nodemon": "^2.0.15",
+    "octokit": "^2.0.4",
     "sequelize-cli": "^6.4.1"
   }
 }
