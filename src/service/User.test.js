@@ -2,6 +2,7 @@ const passwordHash = require('password-hash');
 
 const userService = require('./User');
 const userDao = require('../dao/User');
+const mailer = require('../helper/mailer');
 
 jest.mock('../dao/User', () => ({
   save: jest.fn(),
@@ -17,6 +18,7 @@ describe('User Service', () => {
     it('should successfully signup user', async () => {
       const expectedResponse = { id: 1, username: 'Test', password: 'password' };
       userDao.save.mockResolvedValueOnce(expectedResponse);
+      mailer.sendMail.mockResolvedValueOnce();
 
       await expect(userService.signup({ username: 'Test', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
     });

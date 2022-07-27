@@ -2,21 +2,33 @@ const passwordHash = require('password-hash');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
-const config = require('../../config/config.json');
+const { getAppConfig } = require('../../config');
 const userDao = require('../dao/User');
 const neworError = require('../constant/error');
+const constant = require('../constant');
+const mailer = require('../helper/mailer');
+
+const config = getAppConfig();
 
 const signup = async (user) => {
   try {
     console.log('Initiating signup user.');
     const id = uuidv4();
-    const verificationToken = jwt.sign({ id }, config.email_verification_token_secret);
+    const verificationToken = jwt.sign({ id }, config.emailVerificationTokenSecret);
     const result = await userDao.save({
       ...user,
       id,
       verificationToken,
       password: passwordHash.generate(user.password),
     });
+    console.log('Initiating verification mail to user.');
+    await mailer.sendMail({
+      from: config.emailId,
+      to: result.email,
+      subject: constant.VERIFICATION_MAIL.SUBJECT,
+      html: '',
+    });
+    console.log('Successfully sent verification mail to user.');
     console.log('Successfully signed up user.');
     return result;
   } catch (error) {

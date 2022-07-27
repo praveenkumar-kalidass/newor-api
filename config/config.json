@@ -1,3 +1,7 @@
 {
-  "email_verification_token_secret": "test_secret"
+  "email_verification_token_secret": "test_secret",
+  "smtp_endpoint": "smtp.test.com",
+  "smtp_user_name": "qwerty123",
+  "smtp_password": "password",
+  "email_id": "test@test.com"
 }

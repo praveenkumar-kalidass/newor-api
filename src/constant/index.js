@@ -4,6 +4,11 @@ const AUTH_GRANT_TYPE = {
   AUTHORIZATION_CODE: 'authorization_code',
 };
 
+const VERIFICATION_MAIL = {
+  SUBJECT: 'Email verification with Newor',
+};
+
 module.exports = {
   AUTH_GRANT_TYPE,
+  VERIFICATION_MAIL,
 };
