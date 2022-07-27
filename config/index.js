@@ -12,6 +12,7 @@ const getDatabaseConfig = () => ({
 });
 
 const getAppConfig = () => ({
+  baseURL: config.base_url,
   emailVerificationTokenSecret: config.email_verification_token_secret,
   smtpEndpoint: config.smtp_endpoint,
   smtpUsername: config.smtp_user_name,

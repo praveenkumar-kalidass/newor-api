@@ -7,6 +7,7 @@ const userDao = require('../dao/User');
 const neworError = require('../constant/error');
 const constant = require('../constant');
 const mailer = require('../helper/mailer');
+const template = require('../helper/template');
 
 const config = getAppConfig();
 
@@ -26,7 +27,10 @@ const signup = async (user) => {
       from: config.emailId,
       to: result.email,
       subject: constant.VERIFICATION_MAIL.SUBJECT,
-      html: '',
+      html: template.getVerificationMail({
+        baseURL: config.baseURL,
+        link: `/api/user/verify/${verificationToken}`,
+      }),
     });
     console.log('Successfully sent verification mail to user.');
     console.log('Successfully signed up user.');

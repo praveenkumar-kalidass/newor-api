@@ -1,4 +1,5 @@
 {
+  "base_url": "http://localhost:3000",
   "email_verification_token_secret": "test_secret",
   "smtp_endpoint": "smtp.test.com",
   "smtp_user_name": "qwerty123",
