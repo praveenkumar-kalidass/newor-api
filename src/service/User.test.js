@@ -49,7 +49,7 @@ describe('User Service', () => {
 
   describe('login', () => {
     it('should successfully login user', async () => {
-      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123') };
+      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: true };
       userDao.fetch.mockResolvedValueOnce(expectedResponse);
 
       await expect(userService.login({ email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
@@ -59,7 +59,7 @@ describe('User Service', () => {
       userDao.fetch.mockResolvedValueOnce(null);
 
       await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
-        status: 403,
+        status: 404,
         data: {
           code: 'NEWOR_USER_NOT_FOUND',
           description: 'User not found.',
@@ -67,8 +67,21 @@ describe('User Service', () => {
       });
     });
 
+    it('should throw email not verified error', async () => {
+      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: false };
+      userDao.fetch.mockResolvedValueOnce(expectedResponse);
+
+      await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
+        status: 403,
+        data: {
+          code: 'NEWOR_EMAIL_NOT_VERIFIED',
+          description: 'Email verification incomplete.',
+        },
+      });
+    });
+
     it('should throw invalid credentials error', async () => {
-      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123') };
+      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: true };
       userDao.fetch.mockResolvedValueOnce(expectedResponse);
 
       await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({

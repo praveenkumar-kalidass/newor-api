@@ -29,7 +29,7 @@ describe('Client Service', () => {
       clietDao.fetchBy.mockResolvedValueOnce(null);
 
       await expect(clientService.authorize({ id: 'test', secret: 'test' })).rejects.toStrictEqual({
-        status: 403,
+        status: 404,
         data: {
           code: 'NEWOR_CLIENT_NOT_FOUND',
           description: 'Client not found.',

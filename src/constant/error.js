@@ -29,17 +29,24 @@ const errors = {
     },
   },
   USER_NOT_FOUND: {
-    status: 403,
+    status: 404,
     data: {
       code: 'NEWOR_USER_NOT_FOUND',
       description: 'User not found.',
     },
   },
   CLIENT_NOT_FOUND: {
-    status: 403,
+    status: 404,
     data: {
       code: 'NEWOR_CLIENT_NOT_FOUND',
       description: 'Client not found.',
+    },
+  },
+  EMAIL_NOT_VERIFIED: {
+    status: 403,
+    data: {
+      code: 'NEWOR_EMAIL_NOT_VERIFIED',
+      description: 'Email verification incomplete.',
     },
   },
 };

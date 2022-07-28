@@ -49,6 +49,10 @@ const login = async (user) => {
       console.log('No user found with email: ', user.email);
       throw neworError.USER_NOT_FOUND;
     }
+    if (!result.isVerified) {
+      console.log('Unverified user with email: .', user.email);
+      throw neworError.EMAIL_NOT_VERIFIED;
+    }
     if (passwordHash.verify(user.password, result.password)) {
       console.log('Successfully verified user credentials.');
       delete result.password;
