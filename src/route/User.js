@@ -157,4 +157,26 @@ router.use('/v1/authorize', (request, response, next) => {
 });
 router.post('/v1/authorize', userController.authorizeV1);
 
+/**
+ * @swagger
+ * /api/user/v1/verify/{token}:
+ *  post:
+ *    summary: Verify user email token
+ *    description: Token verification sent throught email
+ *    tags:
+ *      - User
+ *    parameters:
+ *      - in: path
+ *        name: token
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: Verification success
+ *      500:
+ *        description: Verification failed
+ */
+router.get('/v1/verify/:token', userController.verifyV1);
+
 module.exports = router;

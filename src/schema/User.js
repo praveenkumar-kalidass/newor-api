@@ -18,7 +18,12 @@ const loginV1 = joi.object({
   response_type: joi.string().max(50).required(),
 });
 
+const verifyV1 = joi.object({
+  token: joi.string().required(),
+});
+
 module.exports = {
   signupV1,
   loginV1,
+  verifyV1,
 };

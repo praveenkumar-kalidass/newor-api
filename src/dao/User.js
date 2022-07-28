@@ -26,7 +26,21 @@ const fetch = async (by) => {
   }
 };
 
+const update = async (by, user) => {
+  try {
+    console.log('Updating user in database');
+    const result = await model.User.update(user, { where: by });
+    if (!result) return result;
+    console.log('Successfully updated user in database');
+    return result.dataValues;
+  } catch (error) {
+    console.error('Error while updating user from database. Error: ', error);
+    throw error;
+  }
+};
+
 module.exports = {
   save,
   fetch,
+  update,
 };

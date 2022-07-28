@@ -29,7 +29,7 @@ const signup = async (user) => {
       subject: constant.VERIFICATION_MAIL.SUBJECT,
       html: template.getVerificationMail({
         baseURL: config.baseURL,
-        link: `/api/user/verify/${verificationToken}`,
+        link: `/api/user/v1/verify/${verificationToken}`,
       }),
     });
     console.log('Successfully sent verification mail to user.');
@@ -65,7 +65,33 @@ const login = async (user) => {
   }
 };
 
+const verify = async (token) => {
+  try {
+    const tokenVerified = jwt.verify(token, config.emailVerificationTokenSecret);
+    if (tokenVerified) {
+      const { id } = jwt.decode(token, config.emailVerificationTokenSecret);
+      const result = await userDao.fetch({ id });
+      if (!result) {
+        console.log('No user found with id from token: ', token);
+        throw neworError.USER_NOT_FOUND;
+      }
+      if (result.verificationToken === token) {
+        await userDao.update({ id }, { isVerified: true });
+        return { status: 'Verification Success' };
+      }
+    }
+    throw neworError.INVALID_CREDENTIALS;
+  } catch (error) {
+    if (neworError.isNeworError(error)) {
+      throw error;
+    }
+    console.error('Error while verifying user. Error: ', error);
+    throw neworError.INTERNAL_SERVER_ERROR;
+  }
+};
+
 module.exports = {
   signup,
   login,
+  verify,
 };

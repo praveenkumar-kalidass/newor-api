@@ -71,8 +71,28 @@ const authorizeV1 = async (request, response) => {
   }
 };
 
+const verifyV1 = async (request, response) => {
+  try {
+    console.log('Initiating user verify v1 api.');
+    await userSchema.verifyV1.validateAsync(request.params);
+    const result = await userService.verify(request.params.token);
+    response.status(200).send(result);
+    console.log('Successfully completed user verify v1 api.');
+  } catch (error) {
+    if (joi.isError(error)) {
+      const { BAD_REQUEST } = neworError;
+      console.error('Error while validating user login v1 request. Error: ', error);
+      response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
+      return;
+    }
+    console.error('Error while authorize for user. Error: ', error);
+    response.status(error.status).send(error.data);
+  }
+};
+
 module.exports = {
   signupV1,
   loginV1,
   authorizeV1,
+  verifyV1,
 };

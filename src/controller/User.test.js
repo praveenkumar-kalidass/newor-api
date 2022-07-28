@@ -7,6 +7,7 @@ const userController = require('./User');
 jest.mock('../service/User', () => ({
   signup: jest.fn(),
   login: jest.fn(),
+  verify: jest.fn(),
 }));
 jest.mock('../service/Client', () => ({
   authorize: jest.fn(),
@@ -124,6 +125,26 @@ describe('User Controller', () => {
       expect(responseMock.status).toHaveBeenCalledWith(400);
       expect(responseMock.status.mock.results[0].value.send)
         .toHaveBeenCalledWith(neworError.BAD_REQUEST.data);
+    });
+  });
+
+  describe('verifyV1', () => {
+    const requestMock = httpMocks.createRequest({
+      method: 'POST',
+      url: '/api/user/v1/verify',
+      params: {
+        token: 'testtoken123',
+      },
+    });
+
+    it('should send status as success response', async () => {
+      const expectedResponse = { status: 'Success' };
+      userService.verify.mockResolvedValueOnce(expectedResponse);
+
+      await userController.verifyV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith(expectedResponse);
     });
   });
 });
