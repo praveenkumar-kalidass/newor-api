@@ -77,16 +77,19 @@ const verify = async (token) => {
       }
       if (result.verificationToken === token) {
         await userDao.update({ id }, { isVerified: true });
-        return { status: 'Verification Success' };
+        return template.getVerificationStatus({
+          baseURL: config.baseURL,
+          success: true,
+        });
       }
     }
     throw neworError.INVALID_CREDENTIALS;
   } catch (error) {
-    if (neworError.isNeworError(error)) {
-      throw error;
-    }
     console.error('Error while verifying user. Error: ', error);
-    throw neworError.INTERNAL_SERVER_ERROR;
+    return template.getVerificationStatus({
+      baseURL: config.baseURL,
+      success: false,
+    });
   }
 };
 

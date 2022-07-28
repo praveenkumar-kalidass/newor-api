@@ -6,6 +6,8 @@ const AUTH_GRANT_TYPE = {
 
 const VERIFICATION_MAIL = {
   SUBJECT: 'Email verification with Newor',
+  SUCCESS: 'Email verification success!',
+  FAILURE: 'Email verification failed!',
 };
 
 module.exports = {

@@ -15,6 +15,10 @@ jest.mock('../dao/User', () => ({
   fetch: jest.fn(),
   update: jest.fn(),
 }));
+jest.mock('../helper/template', () => ({
+  getVerificationMail: (data) => data,
+  getVerificationStatus: (data) => data,
+}));
 
 describe('User Service', () => {
   afterEach(() => {
@@ -90,40 +94,35 @@ describe('User Service', () => {
   });
 
   describe('verify', () => {
-    it('should throw error when token verification fails', async () => {
+    it('should return failure template when token verification fails', async () => {
       jwt.verify.mockReturnValueOnce(false);
 
-      await expect(userService.verify('testtoken123')).rejects.toStrictEqual({
-        status: 401,
-        data: {
-          code: 'NEWOR_INVALID_CREDENTIALS',
-          description: 'Invalid credentials.',
-        },
+      await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
+        baseURL: 'http://localhost:3000',
+        success: false,
       });
     });
 
-    it('should throw error when user data mismatch', async () => {
+    it('should return failure template when user data mismatch', async () => {
       jwt.verify.mockReturnValueOnce(true);
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
       userDao.fetch.mockResolvedValueOnce(null);
 
-      await expect(userService.verify('testtoken123')).rejects.toStrictEqual({
-        status: 403,
-        data: {
-          code: 'NEWOR_USER_NOT_FOUND',
-          description: 'User not found.',
-        },
+      await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
+        baseURL: 'http://localhost:3000',
+        success: false,
       });
     });
 
-    it('should be success when token matches', async () => {
+    it('should return success template when token matches', async () => {
       jwt.verify.mockReturnValueOnce(true);
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
       userDao.fetch.mockResolvedValueOnce({ verificationToken: 'testtoken123' });
       userDao.update.mockResolvedValueOnce();
 
       await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
-        status: 'Verification Success',
+        baseURL: 'http://localhost:3000',
+        success: true,
       });
     });
   });

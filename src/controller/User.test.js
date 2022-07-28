@@ -25,6 +25,8 @@ describe('User Controller', () => {
     status: jest.fn(() => ({ send: jest.fn() })),
     set: jest.fn(),
     redirect: jest.fn(),
+    send: jest.fn(),
+    format: jest.fn(),
   };
 
   afterEach(() => {
@@ -143,8 +145,8 @@ describe('User Controller', () => {
 
       await userController.verifyV1(requestMock, responseMock);
 
-      expect(responseMock.status).toHaveBeenCalledWith(200);
-      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith(expectedResponse);
+      expect(responseMock.format)
+        .toHaveBeenCalledWith(expect.objectContaining({ html: expect.any(Function) }));
     });
   });
 });

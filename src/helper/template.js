@@ -1,7 +1,9 @@
+const { VERIFICATION_MAIL } = require('../constant');
+
 const getVerificationMail = (data) => `<div>
   <h1 style="margin-bottom:0;text-align:center">Welcome to NEWOR!</h1>
   <div style="text-align:center">
-    <img style="width: 480px;height:480px" src="${data.baseURL}/public/newor.png" />
+    <img style="width: 480px;height:480px" src="${data.baseURL}/public/newor-verify.png" />
   </div>
   <div style="text-align:center">
     <span>
@@ -17,4 +19,12 @@ const getVerificationMail = (data) => `<div>
   </div>
 </div>`;
 
-module.exports = { getVerificationMail };
+const getVerificationStatus = (data) => `<div>
+  <h1 style="margin-bottom:0;text-align:center">${data.success ? VERIFICATION_MAIL.SUCCESS : VERIFICATION_MAIL.FAILURE}</h1>
+  <div style="text-align:center">
+    <img style="width: 480px;height:480px" src="${data.baseURL}/public/${data.success ? 'newor-success' : 'newor-failure'}.png" />
+  </div>
+</div>
+`;
+
+module.exports = { getVerificationMail, getVerificationStatus };
