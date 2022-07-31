@@ -34,11 +34,6 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       field: 'mobile_number',
     },
-    verificationToken: {
-      type: Sequelize.STRING,
-      allowNull: false,
-      field: 'verification_token',
-    },
     isVerified: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
