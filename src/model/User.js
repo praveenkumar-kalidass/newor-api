@@ -28,6 +28,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       field: 'password',
     },
+    mobileNumber: {
+      type: Sequelize.STRING(10),
+      allowNull: false,
+      unique: true,
+      field: 'mobile_number',
+    },
     verificationToken: {
       type: Sequelize.STRING,
       allowNull: false,

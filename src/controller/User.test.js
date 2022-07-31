@@ -42,6 +42,7 @@ describe('User Controller', () => {
         lastName: 'Newor',
         email: 'test@gmail.com',
         password: 'qwerty',
+        mobileNumber: '9876543210',
       },
     });
 

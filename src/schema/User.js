@@ -6,6 +6,7 @@ const signupV1 = joi.object({
   email: joi.string().max(50).email().required(),
   password: joi.string().alphanum().min(6).max(15)
     .required(),
+  mobileNumber: joi.string().min(10).max(10).required(),
 });
 
 const loginV1 = joi.object({

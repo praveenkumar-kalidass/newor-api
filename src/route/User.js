@@ -24,6 +24,8 @@ const router = express.Router();
  *                type: string
  *              lastName:
  *                type: string
+ *              mobileNumber:
+ *                type: string
  *              email:
  *                type: string
  *              password:
@@ -31,6 +33,7 @@ const router = express.Router();
  *            required:
  *              - firstName
  *              - lastName
+ *              - mobileNumber
  *              - email
  *              - password
  *    responses:
