@@ -130,7 +130,7 @@ describe('User Service', () => {
     it('should return success template when token matches', async () => {
       jwt.verify.mockReturnValueOnce(true);
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
-      userDao.fetch.mockResolvedValueOnce({ verificationToken: 'testtoken123' });
+      userDao.fetch.mockResolvedValueOnce({ id: 'testuserid' });
       userDao.update.mockResolvedValueOnce();
 
       await expect(userService.verify('testtoken123')).resolves.toStrictEqual({

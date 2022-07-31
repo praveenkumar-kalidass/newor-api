@@ -19,7 +19,6 @@ const signup = async (user) => {
     const result = await userDao.save({
       ...user,
       id,
-      verificationToken,
       password: passwordHash.generate(user.password),
     });
     console.log('Initiating verification mail to user.');
@@ -79,13 +78,11 @@ const verify = async (token) => {
         console.log('No user found with id from token: ', token);
         throw neworError.USER_NOT_FOUND;
       }
-      if (result.verificationToken === token) {
-        await userDao.update({ id }, { isVerified: true });
-        return template.getVerificationStatus({
-          baseURL: config.baseURL,
-          success: true,
-        });
-      }
+      await userDao.update({ id }, { isVerified: true });
+      return template.getVerificationStatus({
+        baseURL: config.baseURL,
+        success: true,
+      });
     }
     throw neworError.INVALID_CREDENTIALS;
   } catch (error) {
