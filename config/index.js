@@ -18,6 +18,7 @@ const getAppConfig = () => ({
   smtpUsername: config.smtp_user_name,
   smtpPassword: config.smtp_password,
   emailId: config.email_id,
+  passwordResetTokenSecret: config.password_reset_token_secret,
 });
 
 module.exports = { getDatabaseConfig, getAppConfig };

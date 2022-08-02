@@ -27,4 +27,16 @@ const getVerificationStatus = (data) => `<div>
 </div>
 `;
 
-module.exports = { getVerificationMail, getVerificationStatus };
+const getPasswordResetMail = (data) => `<div>
+  <h1 style="margin-bottom:0;text-align:center">Reset your password!</h1>
+  <div style="text-align:center">
+    <img style="width: 480px;height:480px" src="${data.baseURL}/public/newor-verify.png" />
+  </div>
+  <div style="text-align:center">
+    <span>
+      Please click on the <a href="${data.host + data.link}">link</a> to reset your password with NEWOR 
+    </span>
+  </div>
+</div>`;
+
+module.exports = { getVerificationMail, getVerificationStatus, getPasswordResetMail };

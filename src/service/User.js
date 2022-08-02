@@ -94,8 +94,44 @@ const verify = async (token) => {
   }
 };
 
+const forgotPassword = async (email) => {
+  try {
+    console.log('Initiating forgot password request.');
+    const result = await userDao.fetch({ email });
+    if (!result) {
+      console.log('No user found with email: ', email);
+      throw neworError.USER_NOT_FOUND;
+    }
+    if (!result.isVerified) {
+      console.log('Unverified user with email: .', email);
+      throw neworError.EMAIL_NOT_VERIFIED;
+    }
+    const resetToken = jwt.sign({ id: result.id }, config.passwordResetTokenSecret);
+    await mailer.sendMail({
+      from: config.emailId,
+      to: result.email,
+      subject: constant.VERIFICATION_MAIL.PASSWORD_RESET,
+      html: template.getPasswordResetMail({
+        host: constant.APP.DEEPLINKING_HOST,
+        baseURL: config.baseURL,
+        link: `/reset-password/${resetToken}`,
+      }),
+    });
+    console.log('Successfully sent password reset mail to user.');
+    console.log('Successfully requested password reset for user.');
+    return { email: result.email };
+  } catch (error) {
+    console.error('Error while doing forgot password for user. Error: ', error);
+    if (neworError.isNeworError(error)) {
+      throw error;
+    }
+    throw neworError.INTERNAL_SERVER_ERROR;
+  }
+};
+
 module.exports = {
   signup,
   login,
   verify,
+  forgotPassword,
 };

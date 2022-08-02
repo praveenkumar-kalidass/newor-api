@@ -16,7 +16,7 @@ const router = express.Router();
  *    requestBody:
  *      required: true
  *      content:
- *        application/x-www-form-urlencoded:
+ *        application/json:
  *          schema:
  *            type: object
  *            properties:
@@ -115,7 +115,7 @@ router.post('/v1/login', userController.loginV1);
  *    requestBody:
  *      required: true
  *      content:
- *        application/x-www-form-urlencoded:
+ *        application/json:
  *          schema:
  *            type: object
  *            properties:
@@ -181,5 +181,34 @@ router.post('/v1/authorize', userController.authorizeV1);
  *        description: Verification failed
  */
 router.get('/v1/verify/:token', userController.verifyV1);
+
+/**
+ * @swagger
+ * /api/user/v1/forgot-password:
+ *  post:
+ *    summary: Forgot password
+ *    description: Forgot Password V1
+ *    tags:
+ *      - User
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              email:
+ *                type: string
+ *            required:
+ *              - email
+ *    responses:
+ *      200:
+ *        description: Forgot password success
+ *      500:
+ *        description: Internal Server error
+ *      400:
+ *        description: Bad request
+ */
+router.get('/v1/verify/:token', userController.forgotPasswordV1);
 
 module.exports = router;

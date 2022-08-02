@@ -18,6 +18,7 @@ jest.mock('../dao/User', () => ({
 jest.mock('../helper/template', () => ({
   getVerificationMail: (data) => data,
   getVerificationStatus: (data) => data,
+  getPasswordResetMail: (data) => data,
 }));
 
 describe('User Service', () => {
@@ -136,6 +137,41 @@ describe('User Service', () => {
       await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
         baseURL: 'http://localhost:3000',
         success: true,
+      });
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('should successfully complete forgot password', async () => {
+      userDao.fetch.mockResolvedValueOnce({ email: 'test@newor.com', isVerified: true });
+      mailer.sendMail.mockResolvedValueOnce();
+
+      await expect(userService.forgotPassword('test@newor.com')).resolves.toStrictEqual({
+        email: 'test@newor.com',
+      });
+    });
+
+    it('should throw error when email not found', async () => {
+      userDao.fetch.mockResolvedValueOnce(null);
+
+      await expect(userService.forgotPassword('test@newor.com')).rejects.toStrictEqual({
+        status: 404,
+        data: {
+          code: 'NEWOR_USER_NOT_FOUND',
+          description: 'User not found.',
+        },
+      });
+    });
+
+    it('should throw error when email is not verified', async () => {
+      userDao.fetch.mockResolvedValueOnce({ email: 'test@newor.com', isVerified: false });
+
+      await expect(userService.forgotPassword('test@newor.com')).rejects.toStrictEqual({
+        status: 403,
+        data: {
+          code: 'NEWOR_EMAIL_NOT_VERIFIED',
+          description: 'Email verification incomplete.',
+        },
       });
     });
   });

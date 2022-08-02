@@ -23,8 +23,13 @@ const verifyV1 = joi.object({
   token: joi.string().required(),
 });
 
+const forgotPasswordV1 = joi.object({
+  email: joi.string().max(50).email().required(),
+});
+
 module.exports = {
   signupV1,
   loginV1,
   verifyV1,
+  forgotPasswordV1,
 };

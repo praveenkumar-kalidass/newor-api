@@ -11,5 +11,6 @@ jest.mock('.', () => ({
     smtpUsername: 'qwerty123',
     smtpPassword: 'password',
     emailId: 'test@test.com',
+    passwordResetTokenSecret: 'test_secret',
   })),
 }));

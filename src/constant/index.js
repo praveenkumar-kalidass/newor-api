@@ -8,9 +8,15 @@ const VERIFICATION_MAIL = {
   SUBJECT: 'Email verification with Newor',
   SUCCESS: 'Email verification success!',
   FAILURE: 'Email verification failed!',
+  PASSWORD_RESET: 'Reset password with Newor',
+};
+
+const APP = {
+  DEEPLINKING_HOST: 'newor://',
 };
 
 module.exports = {
   AUTH_GRANT_TYPE,
   VERIFICATION_MAIL,
+  APP,
 };

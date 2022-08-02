@@ -8,6 +8,7 @@ jest.mock('../service/User', () => ({
   signup: jest.fn(),
   login: jest.fn(),
   verify: jest.fn(),
+  forgotPassword: jest.fn(),
 }));
 jest.mock('../service/Client', () => ({
   authorize: jest.fn(),
@@ -148,6 +149,43 @@ describe('User Controller', () => {
 
       expect(responseMock.format)
         .toHaveBeenCalledWith(expect.objectContaining({ html: expect.any(Function) }));
+    });
+  });
+
+  describe('forgotPasswordV1', () => {
+    const requestMock = httpMocks.createRequest({
+      method: 'POST',
+      url: '/api/v1/forgot-password',
+      body: {
+        email: 'test@newor.com',
+      },
+    });
+
+    it('should send user data as success response', async () => {
+      const expectedResponse = { email: 'test@newor.com' };
+      userService.forgotPassword.mockResolvedValueOnce(expectedResponse);
+
+      await userController.forgotPasswordV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    it('should send error data as failure response', async () => {
+      const expectedError = {
+        status: 500,
+        data: {
+          code: 'NEWOR_INTERNAL_SERVER_ERROR',
+          description: 'Internal Server error',
+        },
+      };
+      userService.forgotPassword.mockRejectedValueOnce(expectedError);
+
+      await userController.forgotPasswordV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(500);
+      expect(responseMock.status.mock.results[0].value.send)
+        .toHaveBeenCalledWith(expectedError.data);
     });
   });
 });
