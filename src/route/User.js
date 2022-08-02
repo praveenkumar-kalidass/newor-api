@@ -209,6 +209,6 @@ router.get('/v1/verify/:token', userController.verifyV1);
  *      400:
  *        description: Bad request
  */
-router.get('/v1/forgot-password', userController.forgotPasswordV1);
+router.post('/v1/forgot-password', userController.forgotPasswordV1);
 
 module.exports = router;
