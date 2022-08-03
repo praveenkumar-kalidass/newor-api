@@ -28,7 +28,7 @@ const signup = async (user) => {
       subject: constant.VERIFICATION_MAIL.SUBJECT,
       html: template.getVerificationMail({
         baseURL: config.baseURL,
-        link: `/api/user/v1/verify/${verificationToken}`,
+        link: `/api/linking/v1/email-verification/${verificationToken}`,
       }),
     });
     console.log('Successfully sent verification mail to user.');
@@ -70,27 +70,27 @@ const login = async (user) => {
 
 const verify = async (token) => {
   try {
+    console.log('Initiating user verification.');
     const tokenVerified = jwt.verify(token, config.emailVerificationTokenSecret);
     if (tokenVerified) {
       const { id } = jwt.decode(token, config.emailVerificationTokenSecret);
-      const result = await userDao.fetch({ id });
-      if (!result) {
+      const user = await userDao.fetch({ id });
+      if (!user) {
         console.log('No user found with id from token: ', token);
         throw neworError.USER_NOT_FOUND;
       }
-      await userDao.update({ id }, { isVerified: true });
-      return template.getVerificationStatus({
-        baseURL: config.baseURL,
-        success: true,
-      });
+      const result = await userDao.update({ id }, { isVerified: true });
+      console.log('Successfully completed user verification.');
+      return result;
     }
+    console.log('Token verification failed.');
     throw neworError.INVALID_CREDENTIALS;
   } catch (error) {
+    if (neworError.isNeworError(error)) {
+      throw error;
+    }
     console.error('Error while verifying user. Error: ', error);
-    return template.getVerificationStatus({
-      baseURL: config.baseURL,
-      success: false,
-    });
+    throw neworError.INTERNAL_SERVER_ERROR;
   }
 };
 

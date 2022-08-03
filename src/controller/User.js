@@ -74,9 +74,9 @@ const authorizeV1 = async (request, response) => {
 const verifyV1 = async (request, response) => {
   try {
     console.log('Initiating user verify v1 api.');
-    await userSchema.verifyV1.validateAsync(request.params);
-    const result = await userService.verify(request.params.token);
-    response.format({ html: () => { response.send(result); } });
+    await userSchema.verifyV1.validateAsync(request.body);
+    const result = await userService.verify(request.body.token);
+    response.status(200).send(result);
     console.log('Successfully completed user verify v1 api.');
   } catch (error) {
     if (joi.isError(error)) {

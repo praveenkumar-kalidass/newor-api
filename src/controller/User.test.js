@@ -134,21 +134,21 @@ describe('User Controller', () => {
 
   describe('verifyV1', () => {
     const requestMock = httpMocks.createRequest({
-      method: 'POST',
+      method: 'PUT',
       url: '/api/user/v1/verify',
-      params: {
+      body: {
         token: 'testtoken123',
       },
     });
 
     it('should send status as success response', async () => {
-      const expectedResponse = { status: 'Success' };
+      const expectedResponse = { id: 'testuserid' };
       userService.verify.mockResolvedValueOnce(expectedResponse);
 
       await userController.verifyV1(requestMock, responseMock);
 
-      expect(responseMock.format)
-        .toHaveBeenCalledWith(expect.objectContaining({ html: expect.any(Function) }));
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith(expectedResponse);
     });
   });
 

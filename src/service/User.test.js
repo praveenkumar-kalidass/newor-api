@@ -111,9 +111,12 @@ describe('User Service', () => {
     it('should return failure template when token verification fails', async () => {
       jwt.verify.mockReturnValueOnce(false);
 
-      await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
-        baseURL: 'http://localhost:3000',
-        success: false,
+      await expect(userService.verify('testtoken123')).rejects.toStrictEqual({
+        status: 401,
+        data: {
+          code: 'NEWOR_INVALID_CREDENTIALS',
+          description: 'Invalid credentials.',
+        },
       });
     });
 
@@ -122,9 +125,12 @@ describe('User Service', () => {
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
       userDao.fetch.mockResolvedValueOnce(null);
 
-      await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
-        baseURL: 'http://localhost:3000',
-        success: false,
+      await expect(userService.verify('testtoken123')).rejects.toStrictEqual({
+        status: 404,
+        data: {
+          code: 'NEWOR_USER_NOT_FOUND',
+          description: 'User not found.',
+        },
       });
     });
 
@@ -132,11 +138,11 @@ describe('User Service', () => {
       jwt.verify.mockReturnValueOnce(true);
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
       userDao.fetch.mockResolvedValueOnce({ id: 'testuserid' });
-      userDao.update.mockResolvedValueOnce();
+      userDao.update.mockResolvedValueOnce({ id: 'testuserid', isVerified: true });
 
       await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
-        baseURL: 'http://localhost:3000',
-        success: true,
+        id: 'testuserid',
+        isVerified: true,
       });
     });
   });

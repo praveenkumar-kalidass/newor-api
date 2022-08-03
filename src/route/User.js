@@ -162,25 +162,30 @@ router.post('/v1/authorize', userController.authorizeV1);
 
 /**
  * @swagger
- * /api/user/v1/verify/{token}:
- *  get:
+ * /api/user/v1/verify:
+ *  put:
  *    summary: Verify user email token
  *    description: Token verification sent throught email
  *    tags:
  *      - User
- *    parameters:
- *      - in: path
- *        name: token
- *        required: true
- *        schema:
- *          type: string
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              token:
+ *                type: string
+ *            required:
+ *              - token
  *    responses:
  *      200:
  *        description: Verification success
  *      500:
  *        description: Verification failed
  */
-router.get('/v1/verify/:token', userController.verifyV1);
+router.put('/v1/verify', userController.verifyV1);
 
 /**
  * @swagger
