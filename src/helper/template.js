@@ -34,9 +34,26 @@ const getPasswordResetMail = (data) => `<div>
   </div>
   <div style="text-align:center">
     <span>
-      Please click on the <a href="${data.host + data.link}">link</a> to reset your password with NEWOR 
+      Please click on the <a href="${data.baseURL + data.link}">link</a> to reset your password with NEWOR 
     </span>
+    <p>OR</p>
+    <span>
+      Please paste the following url in your browser for resetting your password,
+    </span>
+    <p style="text-decoration:underline">
+      ${data.baseURL + data.link}
+    </p>
   </div>
 </div>`;
 
-module.exports = { getVerificationMail, getVerificationStatus, getPasswordResetMail };
+const getInvalidLink = (data) => `<div>
+  <h1 style="margin-bottom:0;text-align:center">Oops! Invalid link!</h1>
+  <div style="text-align:center">
+    <img style="width: 480px;height:480px" src="${data.baseURL}/public/newor-failure.png" />
+  </div>
+</div>
+`;
+
+module.exports = {
+  getVerificationMail, getVerificationStatus, getPasswordResetMail, getInvalidLink,
+};

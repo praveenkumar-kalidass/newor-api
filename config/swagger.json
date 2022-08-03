@@ -7,6 +7,6 @@
     }
   },
   "apis": [
-    "./src/route/User.js"
+    "./src/route/*.js"
   ]
 }

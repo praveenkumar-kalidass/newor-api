@@ -112,9 +112,8 @@ const forgotPassword = async (email) => {
       to: result.email,
       subject: constant.VERIFICATION_MAIL.PASSWORD_RESET,
       html: template.getPasswordResetMail({
-        host: constant.APP.DEEPLINKING_HOST,
         baseURL: config.baseURL,
-        link: `/reset-password/${resetToken}`,
+        link: `/api/linking/v1/reset-password/${resetToken}`,
       }),
     });
     console.log('Successfully sent password reset mail to user.');

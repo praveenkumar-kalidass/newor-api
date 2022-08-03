@@ -163,7 +163,7 @@ router.post('/v1/authorize', userController.authorizeV1);
 /**
  * @swagger
  * /api/user/v1/verify/{token}:
- *  post:
+ *  get:
  *    summary: Verify user email token
  *    description: Token verification sent throught email
  *    tags:
