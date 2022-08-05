@@ -109,10 +109,30 @@ const forgotPasswordV1 = async (request, response) => {
   }
 };
 
+const resetPasswordV1 = async (request, response) => {
+  try {
+    console.log('Initiating reset password v1 api');
+    await userSchema.resetPasswordV1.validateAsync(request.body);
+    const result = await userService.resetPassword(request.body);
+    response.status(200).send(result);
+    console.log('Successfully completed reset password v1 api.');
+  } catch (error) {
+    if (joi.isError(error)) {
+      const { BAD_REQUEST } = neworError;
+      console.error('Error while validating reset password v1 request. Error: ', error);
+      response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
+      return;
+    }
+    console.error('Error while requesting reset password user. Error: ', error);
+    response.status(error.status).send(error.data);
+  }
+};
+
 module.exports = {
   signupV1,
   loginV1,
   authorizeV1,
   verifyV1,
   forgotPasswordV1,
+  resetPasswordV1,
 };

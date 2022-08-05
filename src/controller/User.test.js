@@ -9,6 +9,7 @@ jest.mock('../service/User', () => ({
   login: jest.fn(),
   verify: jest.fn(),
   forgotPassword: jest.fn(),
+  resetPassword: jest.fn(),
 }));
 jest.mock('../service/Client', () => ({
   authorize: jest.fn(),
@@ -182,6 +183,44 @@ describe('User Controller', () => {
       userService.forgotPassword.mockRejectedValueOnce(expectedError);
 
       await userController.forgotPasswordV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(500);
+      expect(responseMock.status.mock.results[0].value.send)
+        .toHaveBeenCalledWith(expectedError.data);
+    });
+  });
+
+  describe('resetPasswordV1', () => {
+    const requestMock = httpMocks.createRequest({
+      method: 'PUT',
+      url: '/api/user/v1/reset-password',
+      body: {
+        token: 'testtoken123',
+        password: '123456',
+      },
+    });
+
+    it('should send user data as success response', async () => {
+      const expectedResponse = { email: 'test@newor.com' };
+      userService.resetPassword.mockResolvedValueOnce(expectedResponse);
+
+      await userController.resetPasswordV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    it('should send error data as failure response', async () => {
+      const expectedError = {
+        status: 500,
+        data: {
+          code: 'NEWOR_INTERNAL_SERVER_ERROR',
+          description: 'Internal Server error',
+        },
+      };
+      userService.resetPassword.mockRejectedValueOnce(expectedError);
+
+      await userController.resetPasswordV1(requestMock, responseMock);
 
       expect(responseMock.status).toHaveBeenCalledWith(500);
       expect(responseMock.status.mock.results[0].value.send)

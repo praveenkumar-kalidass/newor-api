@@ -216,4 +216,34 @@ router.put('/v1/verify', userController.verifyV1);
  */
 router.post('/v1/forgot-password', userController.forgotPasswordV1);
 
+/**
+ * @swagger
+ * /api/user/v1/reset-password:
+ *  put:
+ *    summary: Reset password with token
+ *    description: Reset user password with email token
+ *    tags:
+ *      - User
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              token:
+ *                type: string
+ *              password:
+ *                type: string
+ *            required:
+ *              - token
+ *              - password
+ *    responses:
+ *      200:
+ *        description: Reset success
+ *      500:
+ *        description: Reset failed
+ */
+router.put('/v1/reset-password', userController.resetPasswordV1);
+
 module.exports = router;

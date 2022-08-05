@@ -128,9 +128,33 @@ const forgotPassword = async (email) => {
   }
 };
 
+const resetPassword = async (data) => {
+  try {
+    console.log('Initiating reset password request.');
+    const tokenVerified = jwt.verify(data.token, config.passwordResetTokenSecret);
+    if (tokenVerified) {
+      const { id } = jwt.decode(data.token, config.passwordResetTokenSecret);
+      const result = await userDao.update({ id }, {
+        password: passwordHash.generate(data.password),
+      });
+      console.log('Successfully completed user password reset.');
+      return { email: result.email };
+    }
+    console.log('Token verification failed.');
+    throw neworError.INVALID_CREDENTIALS;
+  } catch (error) {
+    if (neworError.isNeworError(error)) {
+      throw error;
+    }
+    console.error('Error while resetting password for user. Error: ', error);
+    throw neworError.INTERNAL_SERVER_ERROR;
+  }
+};
+
 module.exports = {
   signup,
   login,
   verify,
   forgotPassword,
+  resetPassword,
 };

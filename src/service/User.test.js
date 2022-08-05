@@ -181,4 +181,42 @@ describe('User Service', () => {
       });
     });
   });
+
+  describe('resetPassword', () => {
+    it('should throw error when token verification fails', async () => {
+      jwt.verify.mockReturnValueOnce(false);
+
+      await expect(userService.resetPassword({ token: 'testtoken123', password: '123456' })).rejects.toStrictEqual({
+        status: 401,
+        data: {
+          code: 'NEWOR_INVALID_CREDENTIALS',
+          description: 'Invalid credentials.',
+        },
+      });
+    });
+
+    it('should throw error when user data update fails', async () => {
+      jwt.verify.mockReturnValueOnce(true);
+      jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
+      userDao.update.mockRejectedValueOnce({});
+
+      await expect(userService.resetPassword({ token: 'testtoken123', password: '123456' })).rejects.toStrictEqual({
+        status: 500,
+        data: {
+          code: 'NEWOR_INTERNAL_SERVER_ERROR',
+          description: 'Internal Server error',
+        },
+      });
+    });
+
+    it('should return success data when reset password is success', async () => {
+      jwt.verify.mockReturnValueOnce(true);
+      jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
+      userDao.update.mockResolvedValueOnce({ email: 'test@newor.com' });
+
+      await expect(userService.resetPassword({ token: 'testtoken123', password: '123456' })).resolves.toStrictEqual({
+        email: 'test@newor.com',
+      });
+    });
+  });
 });

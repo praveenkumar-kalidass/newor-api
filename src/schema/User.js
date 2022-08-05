@@ -27,9 +27,16 @@ const forgotPasswordV1 = joi.object({
   email: joi.string().max(50).email().required(),
 });
 
+const resetPasswordV1 = joi.object({
+  token: joi.string().required(),
+  password: joi.string().alphanum().min(6).max(15)
+    .required(),
+});
+
 module.exports = {
   signupV1,
   loginV1,
   verifyV1,
   forgotPasswordV1,
+  resetPasswordV1,
 };
