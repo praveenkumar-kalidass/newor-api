@@ -138,7 +138,7 @@ const resetPassword = async (data) => {
         password: passwordHash.generate(data.password),
       });
       console.log('Successfully completed user password reset.');
-      return { email: result.email };
+      return result;
     }
     console.log('Token verification failed.');
     throw neworError.INVALID_CREDENTIALS;
