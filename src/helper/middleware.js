@@ -35,36 +35,36 @@ const httpMiddleware = (request, response, next) => {
 };
 
 const requestResponseMiddleware = (request, response, next) => {
-  const span = tracing.startSpan(`${request.originalUrl} | request/response`, {
+  tracing.startActiveSpan(`${request.originalUrl} | request/response`, {
     kind: 1,
     attributes: {
       method: request.method,
     },
-  });
+  }, (span) => {
+    const requestLog = request.method !== 'GET' ? request.body : request.params;
+    span.addEvent('Request', { request: JSON.stringify(requestLog) });
 
-  const requestLog = request.method !== 'GET' ? request.body : request.params;
-  span.addEvent('Request', { request: JSON.stringify(requestLog) });
+    const actualResponse = { write: response.write, end: response.end, send: response.send };
+    const chunks = [];
 
-  const actualResponse = { write: response.write, end: response.end, send: response.send };
-  const chunks = [];
-
-  response.write = (chunk, ...args) => {
-    chunks.push(chunk);
-    return actualResponse.write.apply(response, args);
-  };
-  response.end = (chunk, ...args) => {
-    if (chunk) {
+    response.write = (chunk, ...args) => {
       chunks.push(chunk);
-    }
-    const responseLog = Buffer.concat(chunks).toString('utf8');
-    span.setStatus({
-      code: traceStatusCode[response.statusCode] || 2,
-    });
-    span.addEvent('Response', { response: responseLog });
-    span.end();
-    return actualResponse.end.apply(response, [chunk, ...args]);
-  };
-  next();
+      return actualResponse.write.apply(response, args);
+    };
+    response.end = (chunk, ...args) => {
+      if (chunk) {
+        chunks.push(chunk);
+      }
+      const responseLog = Buffer.concat(chunks).toString('utf8');
+      span.setStatus({
+        code: traceStatusCode[response.statusCode] || 2,
+      });
+      span.addEvent('Response', { response: responseLog });
+      span.end();
+      return actualResponse.end.apply(response, [chunk, ...args]);
+    };
+    next();
+  });
 };
 
 module.exports = { httpMiddleware, requestResponseMiddleware };
