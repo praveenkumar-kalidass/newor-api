@@ -13,6 +13,7 @@ const VERIFICATION_MAIL = {
 
 const APP = {
   DEEPLINKING_HOST: 'newor://',
+  SERVICE_NAME: 'newor-api',
 };
 
 module.exports = {
