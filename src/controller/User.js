@@ -5,23 +5,30 @@ const userSchema = require('../schema/User');
 const userService = require('../service/User');
 const neworError = require('../constant/error');
 const oauthHelper = require('../helper/oauth');
+const logger = require('../helper/logger');
 
 const signupV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'signupV1',
+  });
   try {
-    console.log('Initiating user signup v1 api.');
+    log.info('Initiating user signup v1 api.');
     await userSchema.signupV1.validateAsync(request.body);
     const result = await userService.signup(request.body);
     response.status(200).send(result);
-    console.log('Successfully completed user signup v1 api.');
+    log.info('Successfully completed user signup v1 api.');
   } catch (error) {
     if (joi.isError(error)) {
-      console.error('Error while validating user signup v1 request. Error: ', error);
+      log.error(`Error while validating user signup v1 request. Error: ${error}`);
       const { BAD_REQUEST } = neworError;
       response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
       return;
     }
-    console.error('Error while trying signup v1 api. Error: ', error);
+    log.error(`Error while trying signup v1 api. Error: ${JSON.stringify(error)}`);
     response.status(error.status).send(error.data);
+  } finally {
+    log.end();
   }
 };
 
@@ -32,8 +39,12 @@ const oAuth = new OAuthServer({
 });
 
 const loginV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'loginV1',
+  });
   try {
-    console.log('Initiating user login v1 api.');
+    log.info('Initiating user login v1 api.');
     await userSchema.loginV1.validateAsync(request.body);
     const oauthRequest = new OAuthServer.Request(request);
     const oauthResponse = new OAuthServer.Response(request);
@@ -44,87 +55,114 @@ const loginV1 = async (request, response) => {
         handle: () => user,
       },
     });
-    console.log('Redirecting to authorize user login.');
+    log.info('Redirecting to authorize user login.');
     response.set(oauthResponse.headers);
     response.redirect(neworError.REDIRECT.status, oauthResponse.headers.location);
   } catch (error) {
     const { BAD_REQUEST } = neworError;
     if (joi.isError(error)) {
-      console.error('Error while validating user login v1 request. Error: ', error);
+      log.error(`Error while validating user login v1 request. Error: ${error}`);
       response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
       return;
     }
-    console.error('Error while login for user. Error: ', error);
+    log.error(`Error while login for user. Error: ${JSON.stringify(error)}`);
     response.status(error.status).send(error.data);
+  } finally {
+    log.end();
   }
 };
 
 const authorizeV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'authorizeV1',
+  });
   try {
     const oauthRequest = new OAuthServer.Request(request);
     const oauthResponse = new OAuthServer.Response(request);
     const result = await oAuth.token(oauthRequest, oauthResponse, {});
     response.status(200).send(result);
   } catch (error) {
-    console.error('Error while authorize for user. Error: ', error);
+    log.error(`Error while authorize for user. Error: ${error}`);
     response.status(error.status).send(error.data);
+  } finally {
+    log.end();
   }
 };
 
 const verifyV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'verifyV1',
+  });
   try {
-    console.log('Initiating user verify v1 api.');
+    log.info('Initiating user verify v1 api.');
     await userSchema.verifyV1.validateAsync(request.body);
     const result = await userService.verify(request.body.token);
     response.status(200).send(result);
-    console.log('Successfully completed user verify v1 api.');
+    log.info('Successfully completed user verify v1 api.');
+    log.end();
   } catch (error) {
     if (joi.isError(error)) {
       const { BAD_REQUEST } = neworError;
-      console.error('Error while validating user verification v1 request. Error: ', error);
+      log.error(`Error while validating user verification v1 request. Error: ${error}`);
       response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
       return;
     }
-    console.error('Error while verifying user. Error: ', error);
+    log.error(`Error while verifying user. Error: ${JSON.stringify(error)}`);
     response.status(error.status).send(error.data);
+  } finally {
+    log.end();
   }
 };
 
 const forgotPasswordV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'forgotPasswordV1',
+  });
   try {
-    console.log('Initiating forgot passwor d v1 api');
+    log.info('Initiating forgot passwor d v1 api');
     await userSchema.forgotPasswordV1.validateAsync(request.body);
     const result = await userService.forgotPassword(request.body.email);
     response.status(200).send(result);
-    console.log('Successfully completed forgot password v1 api.');
+    log.info('Successfully completed forgot password v1 api.');
   } catch (error) {
     if (joi.isError(error)) {
       const { BAD_REQUEST } = neworError;
-      console.error('Error while validating forgot password v1 request. Error: ', error);
+      log.error(`Error while validating forgot password v1 request. Error: ${error}`);
       response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
       return;
     }
-    console.error('Error while requesting forgot password user. Error: ', error);
+    log.error(`Error while requesting forgot password user. Error: ${JSON.stringify(error)}`);
     response.status(error.status).send(error.data);
+  } finally {
+    log.end();
   }
 };
 
 const resetPasswordV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'resetPasswordV1',
+  });
   try {
-    console.log('Initiating reset password v1 api');
+    log.info('Initiating reset password v1 api');
     await userSchema.resetPasswordV1.validateAsync(request.body);
     const result = await userService.resetPassword(request.body);
     response.status(200).send(result);
-    console.log('Successfully completed reset password v1 api.');
+    log.info('Successfully completed reset password v1 api.');
   } catch (error) {
     if (joi.isError(error)) {
       const { BAD_REQUEST } = neworError;
-      console.error('Error while validating reset password v1 request. Error: ', error);
+      log.error(`Error while validating reset password v1 request. Error: ${error}`);
       response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
       return;
     }
-    console.error('Error while requesting reset password user. Error: ', error);
+    log.error(`Error while requesting reset password user. Error: ${JSON.stringify(error)}`);
     response.status(error.status).send(error.data);
+  } finally {
+    log.end();
   }
 };
 

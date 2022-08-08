@@ -1,23 +1,39 @@
+const joi = require('joi');
+
+const neworError = require('../constant/error');
 const linkingSchema = require('../schema/Linking');
 const { getInvalidLink } = require('../helper/template');
 const constant = require('../constant');
 const { getAppConfig } = require('../../config');
+const logger = require('../helper/logger');
 
 const config = getAppConfig();
 
 const linkingV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'linking_controller',
+    method: 'linkingV1',
+  });
   try {
-    console.log('Initiating linking v1 api.');
+    log.info('Initiating linking v1 api.');
     await linkingSchema.linkingV1.validateAsync(request.params);
     response.redirect(`${constant.APP.DEEPLINKING_HOST}${request.params.path}/${request.params.token}`);
-    console.log('Successfully redirected linking v1 api.');
+    log.info('Successfully redirected linking v1 api.');
   } catch (error) {
-    console.error('Error while trying linking v1 api. Error: ', error);
+    if (joi.isError(error)) {
+      log.error(`Error while validating linking v1 request. Error: ${error}`);
+      const { BAD_REQUEST } = neworError;
+      response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
+      return;
+    }
+    log.error(`Error while trying linking v1 api. Error: ${error}`);
     response.format({
       html: () => {
         response.status(500).send(getInvalidLink({ baseURL: config.baseURL }));
       },
     });
+  } finally {
+    log.end();
   }
 };
 

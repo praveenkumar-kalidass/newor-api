@@ -2,6 +2,7 @@ const express = require('express');
 
 const userController = require('../controller/User');
 const constant = require('../constant');
+const { requestResponseMiddleware } = require('../helper/middleware');
 
 const router = express.Router();
 
@@ -44,7 +45,7 @@ const router = express.Router();
  *      400:
  *        description: Bad request
  */
-router.post('/v1/signup', userController.signupV1);
+router.post('/v1/signup', requestResponseMiddleware, userController.signupV1);
 
 /**
  * @swagger
@@ -102,7 +103,7 @@ router.use('/v1/login', (request, response, next) => {
   delete request.body.responseType;
   next();
 });
-router.post('/v1/login', userController.loginV1);
+router.post('/v1/login', requestResponseMiddleware, userController.loginV1);
 
 /**
  * @swagger
@@ -158,7 +159,7 @@ router.use('/v1/authorize', (request, response, next) => {
   delete request.body.grantType;
   next();
 });
-router.post('/v1/authorize', userController.authorizeV1);
+router.post('/v1/authorize', requestResponseMiddleware, userController.authorizeV1);
 
 /**
  * @swagger
@@ -185,7 +186,7 @@ router.post('/v1/authorize', userController.authorizeV1);
  *      500:
  *        description: Verification failed
  */
-router.put('/v1/verify', userController.verifyV1);
+router.put('/v1/verify', requestResponseMiddleware, userController.verifyV1);
 
 /**
  * @swagger
@@ -214,7 +215,7 @@ router.put('/v1/verify', userController.verifyV1);
  *      400:
  *        description: Bad request
  */
-router.post('/v1/forgot-password', userController.forgotPasswordV1);
+router.post('/v1/forgot-password', requestResponseMiddleware, userController.forgotPasswordV1);
 
 /**
  * @swagger
@@ -244,6 +245,6 @@ router.post('/v1/forgot-password', userController.forgotPasswordV1);
  *      500:
  *        description: Reset failed
  */
-router.put('/v1/reset-password', userController.resetPasswordV1);
+router.put('/v1/reset-password', requestResponseMiddleware, userController.resetPasswordV1);
 
 module.exports = router;

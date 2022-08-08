@@ -1,6 +1,7 @@
 const express = require('express');
 
 const linkingController = require('../controller/Linking');
+const { requestResponseMiddleware } = require('../helper/middleware');
 
 const router = express.Router();
 
@@ -29,6 +30,6 @@ const router = express.Router();
  *      500:
  *        description: Linking failed
  */
-router.get('/v1/:path/:token', linkingController.linkingV1);
+router.get('/v1/:path/:token', requestResponseMiddleware, linkingController.linkingV1);
 
 module.exports = router;
