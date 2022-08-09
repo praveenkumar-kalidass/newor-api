@@ -866,13 +866,6 @@
     "@octokit/webhooks-types" "6.2.4"
     aggregate-error "^3.1.0"
 
-"@opentelemetry/api-metrics@0.29.2":
-  version "0.29.2"
-  resolved "https://registry.yarnpkg.com/@opentelemetry/api-metrics/-/api-metrics-0.29.2.tgz#daa823e0965754222b49a6ae6133df8b39ff8fd2"
-  integrity sha512-yRdF5beqKuEdsPNoO7ijWCQ9HcyN0Tlgicf8RS6gzGOI54d6Hj7yKquJ6+X9XV+CSRbRWJYb+lOsXyso7uyX2g==
-  dependencies:
-    "@opentelemetry/api" "^1.0.0"
-
 "@opentelemetry/api-metrics@0.31.0":
   version "0.31.0"
   resolved "https://registry.yarnpkg.com/@opentelemetry/api-metrics/-/api-metrics-0.31.0.tgz#0ed4cf4d7c731f968721c2b303eaf5e9fd42f736"
@@ -906,23 +899,6 @@
     "@opentelemetry/sdk-trace-base" "1.5.0"
     "@opentelemetry/semantic-conventions" "1.5.0"
     jaeger-client "^3.15.0"
-
-"@opentelemetry/instrumentation-winston@^0.29.0":
-  version "0.29.0"
-  resolved "https://registry.yarnpkg.com/@opentelemetry/instrumentation-winston/-/instrumentation-winston-0.29.0.tgz#75d575b95f3e85b784d90b1e5414ec30df5c9196"
-  integrity sha512-z48oitpODk5BkJXp4OlRLAQf5JLH0jcSmHvqhlgB9tHddNG+xQWa1Xb0kyBX4i4r0jGFR7cvImIb53wrEavUBA==
-  dependencies:
-    "@opentelemetry/instrumentation" "^0.29.2"
-
-"@opentelemetry/instrumentation@^0.29.2":
-  version "0.29.2"
-  resolved "https://registry.yarnpkg.com/@opentelemetry/instrumentation/-/instrumentation-0.29.2.tgz#70e6d4e1a84508f5e9d8c7c426adcd7b0dba6c95"
-  integrity sha512-LXx5V0ONNATQFCE8C5uqnxWSm4rcXLssdLHdXjtGdxRmURqj/JO8jYefqXCD0LzsqEQ6yxOx2GZ0dgXvhBVdTw==
-  dependencies:
-    "@opentelemetry/api-metrics" "0.29.2"
-    require-in-the-middle "^5.0.3"
-    semver "^7.3.2"
-    shimmer "^1.2.1"
 
 "@opentelemetry/instrumentation@^0.31.0":
   version "0.31.0"

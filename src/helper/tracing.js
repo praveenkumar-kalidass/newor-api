@@ -3,7 +3,7 @@ const { registerInstrumentations } = require('@opentelemetry/instrumentation');
 const { NodeTracerProvider } = require('@opentelemetry/sdk-trace-node');
 const { Resource } = require('@opentelemetry/resources');
 const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
-const { BatchSpanProcessor } = require('@opentelemetry/sdk-trace-base');
+const { SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-base');
 const { JaegerExporter } = require('@opentelemetry/exporter-jaeger');
 
 const tracing = (serviceName) => {
@@ -18,7 +18,7 @@ const tracing = (serviceName) => {
     instrumentations: [],
   });
 
-  provider.addSpanProcessor(new BatchSpanProcessor(new JaegerExporter()));
+  provider.addSpanProcessor(new SimpleSpanProcessor(new JaegerExporter()));
   provider.register();
 
   const tracer = opentelemetry.trace.getTracer(serviceName);

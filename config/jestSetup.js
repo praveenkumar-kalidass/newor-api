@@ -14,3 +14,14 @@ jest.mock('.', () => ({
     passwordResetTokenSecret: 'test_secret',
   })),
 }));
+
+jest.mock('../src/helper/logger', () => ({
+  init: () => ({
+    context: {},
+    // eslint-disable-next-line no-console
+    info: console.log,
+    // eslint-disable-next-line no-console
+    error: console.error,
+    end: jest.fn(),
+  }),
+}));

@@ -1,14 +1,19 @@
 const model = require('../model');
+const logger = require('../helper/logger');
 
-const fetchBy = async (id) => {
+const fetchBy = async (ctxt, id) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'client_dao',
+    method: 'fetchBy',
+  });
   try {
-    console.log('Fetching client from database');
+    log.info('Fetching client from database');
     const result = await model.Client.findByPk(id);
     if (!result) return result;
-    console.log('Successfully fetched client from database');
+    log.info('Successfully fetched client from database');
     return result.dataValues;
   } catch (error) {
-    console.error('Error while fetching client from database. Error: ', error);
+    log.error(`Error while fetching client from database. Error: ${error}`);
     throw error;
   }
 };

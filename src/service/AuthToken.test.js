@@ -6,6 +6,8 @@ jest.mock('../dao/AuthToken', () => ({
 }));
 
 describe('AuthToken Service', () => {
+  const mockContext = {};
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -20,6 +22,7 @@ describe('AuthToken Service', () => {
       authTokenDao.save.mockResolvedValueOnce({ accessToken: 'test_access_token' });
 
       await expect(authTokenService.persist(
+        mockContext,
         { accessToken: 'test_access_token' },
         { id: 'test_client_id' },
         { id: 'test_user_id' },
@@ -30,6 +33,7 @@ describe('AuthToken Service', () => {
       authTokenDao.save.mockRejectedValueOnce(Error('Auth token error'));
 
       await expect(authTokenService.persist(
+        mockContext,
         { accessToken: 'test_access_token' },
         { id: 'test_client_id' },
         { id: 'test_user_id' },

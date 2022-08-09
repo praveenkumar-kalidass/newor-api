@@ -6,6 +6,7 @@ const tracing = require('./tracing')(constant.APP.SERVICE_NAME);
 const traceStatusCode = {
   200: 1,
   307: 1,
+  302: 1,
 };
 
 const httpMiddleware = (request, response, next) => {
@@ -19,7 +20,7 @@ const httpMiddleware = (request, response, next) => {
     },
   }, (span) => {
     const actualResponse = { end: response.end };
-    response.end = (chunk, ...args) => {
+    response.end = (...args) => {
       span.setStatus({
         code: traceStatusCode[response.statusCode] || 2,
       });
@@ -28,7 +29,7 @@ const httpMiddleware = (request, response, next) => {
         'http.status_text': http.STATUS_CODES[response.statusCode],
       });
       span.end();
-      return actualResponse.end.apply(response, [chunk, ...args]);
+      return actualResponse.end.apply(response, args);
     };
     next();
   });
@@ -44,18 +45,23 @@ const requestResponseMiddleware = (request, response, next) => {
     const requestLog = request.method !== 'GET' ? request.body : request.params;
     span.addEvent('Request', { request: JSON.stringify(requestLog) });
 
-    const actualResponse = { write: response.write, end: response.end, send: response.send };
+    const actualResponse = { write: response.write, end: response.end };
     const chunks = [];
 
     response.write = (chunk, ...args) => {
-      chunks.push(chunk);
+      if (typeof chunk !== 'string') {
+        chunks.push(chunk);
+      }
       return actualResponse.write.apply(response, args);
     };
     response.end = (chunk, ...args) => {
-      if (chunk) {
-        chunks.push(chunk);
+      let responseLog = chunk;
+      if (typeof chunk !== 'string') {
+        if (chunk) {
+          chunks.push(chunk);
+        }
+        responseLog = Buffer.concat(chunks).toString('utf8');
       }
-      const responseLog = Buffer.concat(chunks).toString('utf8');
       span.setStatus({
         code: traceStatusCode[response.statusCode] || 2,
       });

@@ -3,17 +3,22 @@ const passwordHash = require('password-hash');
 const neworError = require('../constant/error');
 const clientDao = require('../dao/Client');
 const constant = require('../constant');
+const logger = require('../helper/logger');
 
-const authorize = async (client) => {
+const authorize = async (ctxt, client) => {
+  const log = await logger.init(ctxt, 'oauth2-server', {
+    class: 'client_service',
+    method: 'authorize',
+  });
   try {
-    console.log('Initiating authorize client.');
-    const result = await clientDao.fetchBy(client.id);
+    log.info('Initiating authorize client.');
+    const result = await clientDao.fetchBy(log.context, client.id);
     if (!result) {
-      console.log('No client found with id: ', client.id);
+      log.info(`No client found with id: ${client.id}`);
       throw neworError.CLIENT_NOT_FOUND;
     }
     if (!client.secret || passwordHash.verify(client.secret, result.secret)) {
-      console.log('Successfully verified client credentials.');
+      log.info('Successfully verified client credentials.');
       const { AUTH_GRANT_TYPE } = constant;
       delete result.secret;
       return {
@@ -26,14 +31,18 @@ const authorize = async (client) => {
         redirectUris: ['authorize'],
       };
     }
-    console.log('Client credentials verification failed.');
+    log.info('Client credentials verification failed.');
     throw neworError.INVALID_CREDENTIALS;
   } catch (error) {
     if (neworError.isNeworError(error)) {
       throw error;
     }
-    console.error('Error while authorize client. Error: ', error);
+    log.error(`Error while authorize client. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
+  } finally {
+    if (!ctxt) {
+      log.end();
+    }
   }
 };
 

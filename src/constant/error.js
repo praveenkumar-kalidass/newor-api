@@ -14,13 +14,6 @@ const errors = {
       description: 'Bad request',
     },
   },
-  REDIRECT: {
-    status: 307,
-    data: {
-      code: 'NEWOR_REDIRECT',
-      description: 'Redirect',
-    },
-  },
   INVALID_CREDENTIALS: {
     status: 401,
     data: {

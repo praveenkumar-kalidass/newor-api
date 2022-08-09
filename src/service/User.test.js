@@ -22,6 +22,8 @@ jest.mock('../helper/template', () => ({
 }));
 
 describe('User Service', () => {
+  const mockContext = {};
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -32,13 +34,13 @@ describe('User Service', () => {
       userDao.save.mockResolvedValueOnce(expectedResponse);
       mailer.sendMail.mockResolvedValueOnce();
 
-      await expect(userService.signup({ username: 'Test', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
+      await expect(userService.signup(mockContext, { username: 'Test', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
     });
 
     it('should throw error when signup user', async () => {
       userDao.save.mockRejectedValueOnce(Error('User error'));
 
-      await expect(userService.signup({ username: 'Test', password: 'test@123' })).rejects.toStrictEqual({
+      await expect(userService.signup(mockContext, { username: 'Test', password: 'test@123' })).rejects.toStrictEqual({
         status: 500,
         data: {
           code: 'NEWOR_INTERNAL_SERVER_ERROR',
@@ -53,13 +55,13 @@ describe('User Service', () => {
       const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: true };
       userDao.fetch.mockResolvedValueOnce(expectedResponse);
 
-      await expect(userService.login({ email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
+      await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
     });
 
     it('should throw user not found error', async () => {
       userDao.fetch.mockResolvedValueOnce(null);
 
-      await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
+      await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
         status: 404,
         data: {
           code: 'NEWOR_USER_NOT_FOUND',
@@ -72,7 +74,7 @@ describe('User Service', () => {
       const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: false };
       userDao.fetch.mockResolvedValueOnce(expectedResponse);
 
-      await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
+      await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
         status: 403,
         data: {
           code: 'NEWOR_EMAIL_NOT_VERIFIED',
@@ -85,7 +87,7 @@ describe('User Service', () => {
       const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: true };
       userDao.fetch.mockResolvedValueOnce(expectedResponse);
 
-      await expect(userService.login({ email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
+      await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test' })).rejects.toStrictEqual({
         status: 401,
         data: {
           code: 'NEWOR_INVALID_CREDENTIALS',
@@ -97,7 +99,7 @@ describe('User Service', () => {
     it('should throw error when login user', async () => {
       userDao.fetch.mockRejectedValueOnce(Error('User error'));
 
-      await expect(userService.login({ email: 'test@test.com', password: 'test@123' })).rejects.toStrictEqual({
+      await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test@123' })).rejects.toStrictEqual({
         status: 500,
         data: {
           code: 'NEWOR_INTERNAL_SERVER_ERROR',
@@ -111,7 +113,7 @@ describe('User Service', () => {
     it('should return failure template when token verification fails', async () => {
       jwt.verify.mockReturnValueOnce(false);
 
-      await expect(userService.verify('testtoken123')).rejects.toStrictEqual({
+      await expect(userService.verify(mockContext, 'testtoken123')).rejects.toStrictEqual({
         status: 401,
         data: {
           code: 'NEWOR_INVALID_CREDENTIALS',
@@ -125,7 +127,7 @@ describe('User Service', () => {
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
       userDao.fetch.mockResolvedValueOnce(null);
 
-      await expect(userService.verify('testtoken123')).rejects.toStrictEqual({
+      await expect(userService.verify(mockContext, 'testtoken123')).rejects.toStrictEqual({
         status: 404,
         data: {
           code: 'NEWOR_USER_NOT_FOUND',
@@ -140,7 +142,7 @@ describe('User Service', () => {
       userDao.fetch.mockResolvedValueOnce({ id: 'testuserid' });
       userDao.update.mockResolvedValueOnce({ id: 'testuserid', isVerified: true });
 
-      await expect(userService.verify('testtoken123')).resolves.toStrictEqual({
+      await expect(userService.verify(mockContext, 'testtoken123')).resolves.toStrictEqual({
         id: 'testuserid',
         isVerified: true,
       });
@@ -152,7 +154,7 @@ describe('User Service', () => {
       userDao.fetch.mockResolvedValueOnce({ email: 'test@newor.com', isVerified: true });
       mailer.sendMail.mockResolvedValueOnce();
 
-      await expect(userService.forgotPassword('test@newor.com')).resolves.toStrictEqual({
+      await expect(userService.forgotPassword(mockContext, 'test@newor.com')).resolves.toStrictEqual({
         email: 'test@newor.com',
       });
     });
@@ -160,7 +162,7 @@ describe('User Service', () => {
     it('should throw error when email not found', async () => {
       userDao.fetch.mockResolvedValueOnce(null);
 
-      await expect(userService.forgotPassword('test@newor.com')).rejects.toStrictEqual({
+      await expect(userService.forgotPassword(mockContext, 'test@newor.com')).rejects.toStrictEqual({
         status: 404,
         data: {
           code: 'NEWOR_USER_NOT_FOUND',
@@ -172,7 +174,7 @@ describe('User Service', () => {
     it('should throw error when email is not verified', async () => {
       userDao.fetch.mockResolvedValueOnce({ email: 'test@newor.com', isVerified: false });
 
-      await expect(userService.forgotPassword('test@newor.com')).rejects.toStrictEqual({
+      await expect(userService.forgotPassword(mockContext, 'test@newor.com')).rejects.toStrictEqual({
         status: 403,
         data: {
           code: 'NEWOR_EMAIL_NOT_VERIFIED',
@@ -186,7 +188,7 @@ describe('User Service', () => {
     it('should throw error when token verification fails', async () => {
       jwt.verify.mockReturnValueOnce(false);
 
-      await expect(userService.resetPassword({ token: 'testtoken123', password: '123456' })).rejects.toStrictEqual({
+      await expect(userService.resetPassword(mockContext, { token: 'testtoken123', password: '123456' })).rejects.toStrictEqual({
         status: 401,
         data: {
           code: 'NEWOR_INVALID_CREDENTIALS',
@@ -200,7 +202,7 @@ describe('User Service', () => {
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
       userDao.update.mockRejectedValueOnce({});
 
-      await expect(userService.resetPassword({ token: 'testtoken123', password: '123456' })).rejects.toStrictEqual({
+      await expect(userService.resetPassword(mockContext, { token: 'testtoken123', password: '123456' })).rejects.toStrictEqual({
         status: 500,
         data: {
           code: 'NEWOR_INTERNAL_SERVER_ERROR',
@@ -214,7 +216,7 @@ describe('User Service', () => {
       jwt.decode.mockReturnValueOnce({ id: 'testuserid' });
       userDao.update.mockResolvedValueOnce({ email: 'test@newor.com' });
 
-      await expect(userService.resetPassword({ token: 'testtoken123', password: '123456' })).resolves.toStrictEqual({
+      await expect(userService.resetPassword(mockContext, { token: 'testtoken123', password: '123456' })).resolves.toStrictEqual({
         email: 'test@newor.com',
       });
     });

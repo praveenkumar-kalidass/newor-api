@@ -1,40 +1,53 @@
 const model = require('../model');
+const logger = require('../helper/logger');
 
-const save = async (user) => {
+const save = async (ctxt, user) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_dao',
+    method: 'save',
+  });
   try {
-    console.log('Saving user to database');
+    log.info('Saving user to database');
     const result = await model.User.create(user);
-    console.log('Successfully saved user to database');
+    log.info('Successfully saved user to database');
     delete result.dataValues.password;
     return result.dataValues;
   } catch (error) {
-    console.error('Error while saving user to database. Error: ', error);
+    log.error(`Error while saving user to database. Error: ${error}`);
     throw error;
   }
 };
 
-const fetch = async (by) => {
+const fetch = async (ctxt, by) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_dao',
+    method: 'fetch',
+  });
   try {
-    console.log('Fetching user from database');
+    log.info('Fetching user from database');
     const result = await model.User.findOne({ where: by });
     if (!result) return result;
-    console.log('Successfully fetched user from database');
+    log.info('Successfully fetched user from database');
     return result.dataValues;
   } catch (error) {
-    console.error('Error while fetching user from database. Error: ', error);
+    log.error(`Error while fetching user from database. Error: ${error}`);
     throw error;
   }
 };
 
-const update = async (by, user) => {
+const update = async (ctxt, by, user) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_dao',
+    method: 'update',
+  });
   try {
-    console.log('Updating user in database');
+    log.info('Updating user in database');
     const result = await model.User.update(user, { where: by });
     if (!result) return result;
-    console.log('Successfully updated user in database');
+    log.info('Successfully updated user in database');
     return result.dataValues;
   } catch (error) {
-    console.error('Error while updating user from database. Error: ', error);
+    log.error(`Error while updating user from database. Error: ${error}`);
     throw error;
   }
 };

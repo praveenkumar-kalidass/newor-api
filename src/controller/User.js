@@ -15,7 +15,7 @@ const signupV1 = async (request, response) => {
   try {
     log.info('Initiating user signup v1 api.');
     await userSchema.signupV1.validateAsync(request.body);
-    const result = await userService.signup(request.body);
+    const result = await userService.signup(log.context, request.body);
     response.status(200).send(result);
     log.info('Successfully completed user signup v1 api.');
   } catch (error) {
@@ -49,7 +49,7 @@ const loginV1 = async (request, response) => {
     const oauthRequest = new OAuthServer.Request(request);
     const oauthResponse = new OAuthServer.Response(request);
     const { email, password } = request.body;
-    const user = await userService.login({ email, password });
+    const user = await userService.login(log.context, { email, password });
     await oAuth.authorize(oauthRequest, oauthResponse, {
       authenticateHandler: {
         handle: () => user,
@@ -57,7 +57,7 @@ const loginV1 = async (request, response) => {
     });
     log.info('Redirecting to authorize user login.');
     response.set(oauthResponse.headers);
-    response.redirect(neworError.REDIRECT.status, oauthResponse.headers.location);
+    response.redirect(307, oauthResponse.headers.location);
   } catch (error) {
     const { BAD_REQUEST } = neworError;
     if (joi.isError(error)) {
@@ -78,9 +78,11 @@ const authorizeV1 = async (request, response) => {
     method: 'authorizeV1',
   });
   try {
+    log.info('Initiating user authorize v1 api');
     const oauthRequest = new OAuthServer.Request(request);
     const oauthResponse = new OAuthServer.Response(request);
     const result = await oAuth.token(oauthRequest, oauthResponse, {});
+    log.info('User authorisation completed successfully');
     response.status(200).send(result);
   } catch (error) {
     log.error(`Error while authorize for user. Error: ${error}`);
@@ -98,7 +100,7 @@ const verifyV1 = async (request, response) => {
   try {
     log.info('Initiating user verify v1 api.');
     await userSchema.verifyV1.validateAsync(request.body);
-    const result = await userService.verify(request.body.token);
+    const result = await userService.verify(log.context, request.body.token);
     response.status(200).send(result);
     log.info('Successfully completed user verify v1 api.');
     log.end();
@@ -124,7 +126,7 @@ const forgotPasswordV1 = async (request, response) => {
   try {
     log.info('Initiating forgot passwor d v1 api');
     await userSchema.forgotPasswordV1.validateAsync(request.body);
-    const result = await userService.forgotPassword(request.body.email);
+    const result = await userService.forgotPassword(log.context, request.body.email);
     response.status(200).send(result);
     log.info('Successfully completed forgot password v1 api.');
   } catch (error) {
@@ -149,7 +151,7 @@ const resetPasswordV1 = async (request, response) => {
   try {
     log.info('Initiating reset password v1 api');
     await userSchema.resetPasswordV1.validateAsync(request.body);
-    const result = await userService.resetPassword(request.body);
+    const result = await userService.resetPassword(log.context, request.body);
     response.status(200).send(result);
     log.info('Successfully completed reset password v1 api.');
   } catch (error) {

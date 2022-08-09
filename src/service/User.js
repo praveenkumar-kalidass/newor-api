@@ -8,20 +8,25 @@ const neworError = require('../constant/error');
 const constant = require('../constant');
 const mailer = require('../helper/mailer');
 const template = require('../helper/template');
+const logger = require('../helper/logger');
 
 const config = getAppConfig();
 
-const signup = async (user) => {
+const signup = async (ctxt, user) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_service',
+    method: 'signup',
+  });
   try {
-    console.log('Initiating signup user.');
+    log.info('Initiating signup user.');
     const id = uuidv4();
     const verificationToken = jwt.sign({ id }, config.emailVerificationTokenSecret);
-    const result = await userDao.save({
+    const result = await userDao.save(ctxt, {
       ...user,
       id,
       password: passwordHash.generate(user.password),
     });
-    console.log('Initiating verification mail to user.');
+    log.info('Initiating verification mail to user.');
     await mailer.sendMail({
       from: config.emailId,
       to: result.email,
@@ -31,79 +36,95 @@ const signup = async (user) => {
         link: `/api/linking/v1/email-verification/${verificationToken}`,
       }),
     });
-    console.log('Successfully sent verification mail to user.');
-    console.log('Successfully signed up user.');
+    log.info('Successfully sent verification mail to user.');
+    log.info('Successfully signed up user.');
     return result;
   } catch (error) {
-    console.error('Error while signing up user. Error: ', error);
+    log.error(`Error while signing up user. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
   }
 };
 
-const login = async (user) => {
+const login = async (ctxt, user) => {
+  const log = await logger.init(ctxt, 'oauth2-server', {
+    class: 'user_service',
+    method: 'login',
+  });
   try {
-    console.log('Initiating login user.');
-    const result = await userDao.fetch({ email: user.email });
+    log.info('Initiating login user.');
+    const result = await userDao.fetch(log.context, { email: user.email });
     if (!result) {
-      console.log('No user found with email: ', user.email);
+      log.info(`No user found with email: ${user.email}`);
       throw neworError.USER_NOT_FOUND;
     }
     if (!result.isVerified) {
-      console.log('Unverified user with email: .', user.email);
+      log.info(`Unverified user with email: ${user.email}`);
       throw neworError.EMAIL_NOT_VERIFIED;
     }
     if (passwordHash.verify(user.password, result.password)) {
-      console.log('Successfully verified user credentials.');
+      log.info('Successfully verified user credentials.');
       delete result.password;
       return result;
     }
-    console.log('User credentials verification failed.');
+    log.info('User credentials verification failed.');
     throw neworError.INVALID_CREDENTIALS;
   } catch (error) {
     if (neworError.isNeworError(error)) {
       throw error;
     }
-    console.error('Error while login user. Error: ', error);
+    log.error('Error while login user. Error: ', error);
     throw neworError.INTERNAL_SERVER_ERROR;
+  } finally {
+    if (!ctxt) {
+      log.end();
+    }
   }
 };
 
-const verify = async (token) => {
+const verify = async (ctxt, token) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_service',
+    method: 'login',
+  });
   try {
-    console.log('Initiating user verification.');
+    log.info('Initiating user verification.');
     const tokenVerified = jwt.verify(token, config.emailVerificationTokenSecret);
     if (tokenVerified) {
       const { id } = jwt.decode(token, config.emailVerificationTokenSecret);
-      const user = await userDao.fetch({ id });
+      const user = await userDao.fetch(ctxt, { id });
       if (!user) {
-        console.log('No user found with id from token: ', token);
+        log.info(`No user found with id from token: ${token}`);
         throw neworError.USER_NOT_FOUND;
       }
-      const result = await userDao.update({ id }, { isVerified: true });
-      console.log('Successfully completed user verification.');
+      const result = await userDao.update(ctxt, { id }, { isVerified: true });
+      log.info('Successfully completed user verification.');
       return result;
     }
-    console.log('Token verification failed.');
+    log.info('Token verification failed.');
     throw neworError.INVALID_CREDENTIALS;
   } catch (error) {
     if (neworError.isNeworError(error)) {
       throw error;
     }
-    console.error('Error while verifying user. Error: ', error);
+    log.error(`Error while verifying user. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
   }
 };
 
-const forgotPassword = async (email) => {
+const forgotPassword = async (ctxt, email) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_service',
+    method: 'forgotPassword',
+  });
   try {
-    console.log('Initiating forgot password request.');
-    const result = await userDao.fetch({ email });
+    log.info('Initiating forgot password request.');
+    const result = await userDao.fetch(ctxt, { email });
     if (!result) {
-      console.log('No user found with email: ', email);
+      log.info(`No user found with email: ${email}`);
       throw neworError.USER_NOT_FOUND;
     }
     if (!result.isVerified) {
-      console.log('Unverified user with email: .', email);
+      log.info(`Unverified user with email: ${email}`);
       throw neworError.EMAIL_NOT_VERIFIED;
     }
     const resetToken = jwt.sign({ id: result.id }, config.passwordResetTokenSecret);
@@ -116,37 +137,41 @@ const forgotPassword = async (email) => {
         link: `/api/linking/v1/reset-password/${resetToken}`,
       }),
     });
-    console.log('Successfully sent password reset mail to user.');
-    console.log('Successfully requested password reset for user.');
+    log.info('Successfully sent password reset mail to user.');
+    log.info('Successfully requested password reset for user.');
     return { email: result.email };
   } catch (error) {
-    console.error('Error while doing forgot password for user. Error: ', error);
     if (neworError.isNeworError(error)) {
       throw error;
     }
+    log.error(`Error while doing forgot password for user. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
   }
 };
 
-const resetPassword = async (data) => {
+const resetPassword = async (ctxt, data) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_service',
+    method: 'resetPassword',
+  });
   try {
-    console.log('Initiating reset password request.');
+    log.info('Initiating reset password request.');
     const tokenVerified = jwt.verify(data.token, config.passwordResetTokenSecret);
     if (tokenVerified) {
       const { id } = jwt.decode(data.token, config.passwordResetTokenSecret);
-      const result = await userDao.update({ id }, {
+      const result = await userDao.update(ctxt, { id }, {
         password: passwordHash.generate(data.password),
       });
-      console.log('Successfully completed user password reset.');
+      log.info('Successfully completed user password reset.');
       return result;
     }
-    console.log('Token verification failed.');
+    log.info('Token verification failed.');
     throw neworError.INVALID_CREDENTIALS;
   } catch (error) {
     if (neworError.isNeworError(error)) {
       throw error;
     }
-    console.error('Error while resetting password for user. Error: ', error);
+    log.error(`Error while resetting password for user. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
   }
 };

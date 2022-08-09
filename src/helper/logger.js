@@ -11,14 +11,16 @@ const logger = winston.createLogger({
 });
 
 function info(message) {
-  logger.info(message, this.tags);
   const span = opentelemetry.trace.getSpan(this.context);
+  const { traceId, spanId } = span.spanContext();
+  logger.info(message, { ...this.tags, traceId, spanId });
   span.addEvent('info', { ...this.tags, message });
 }
 
 function error(message) {
-  logger.error(message, this.tags);
   const span = opentelemetry.trace.getSpan(this.context);
+  const { traceId, spanId } = span.spanContext();
+  logger.error(message, { ...this.tags, traceId, spanId });
   span.addEvent('error', { ...this.tags, message });
 }
 
@@ -42,7 +44,7 @@ const init = (ctxt, url, tags) => (
       return;
     }
     resolve({
-      ctxt,
+      context: ctxt,
       tags,
       info,
       error,
