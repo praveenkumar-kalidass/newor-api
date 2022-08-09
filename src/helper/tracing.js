@@ -18,7 +18,9 @@ const tracing = (serviceName) => {
     instrumentations: [],
   });
 
-  provider.addSpanProcessor(new SimpleSpanProcessor(new JaegerExporter()));
+  provider.addSpanProcessor(new SimpleSpanProcessor(new JaegerExporter({
+    host: 'jaeger',
+  })));
   provider.register();
 
   const tracer = opentelemetry.trace.getTracer(serviceName);
