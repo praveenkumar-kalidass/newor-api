@@ -42,6 +42,13 @@ const errors = {
       description: 'Email verification incomplete.',
     },
   },
+  UNAUTHENTICATED: {
+    status: 401,
+    data: {
+      code: 'NEWOR_UNAUTHENTICATED',
+      description: 'Authentication failed.',
+    },
+  },
 };
 
 module.exports = errors;

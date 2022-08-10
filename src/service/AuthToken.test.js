@@ -3,6 +3,7 @@ const authTokenDao = require('../dao/AuthToken');
 
 jest.mock('../dao/AuthToken', () => ({
   save: jest.fn(),
+  fetch: jest.fn(),
 }));
 
 describe('AuthToken Service', () => {
@@ -44,6 +45,38 @@ describe('AuthToken Service', () => {
           description: 'Internal Server error',
         },
       });
+    });
+  });
+
+  describe('find', () => {
+    it('should successfully return token', async () => {
+      authTokenDao.fetch.mockResolvedValueOnce({
+        accessToken: 'test_access_token',
+        accessTokenExpiresAt: '2022-08-10T13:54:30.578Z',
+        clientId: 'test_client_id',
+        userId: 'test_user_id',
+      });
+
+      await expect(authTokenService.find(mockContext, 'test_access_token'))
+        .resolves.toStrictEqual({
+          accessToken: 'test_access_token',
+          accessTokenExpiresAt: '2022-08-10T13:54:30.578Z',
+          client: { id: 'test_client_id' },
+          user: { id: 'test_user_id' },
+        });
+    });
+
+    it('should throw error when token is not found', async () => {
+      authTokenDao.fetch.mockResolvedValueOnce();
+
+      await expect(authTokenService.find(mockContext, 'test_access_token'))
+        .rejects.toStrictEqual({
+          status: 500,
+          data: {
+            code: 'NEWOR_INTERNAL_SERVER_ERROR',
+            description: 'Internal Server error',
+          },
+        });
     });
   });
 });

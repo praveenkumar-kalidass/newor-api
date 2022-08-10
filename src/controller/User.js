@@ -4,7 +4,7 @@ const OAuthServer = require('oauth2-server');
 const userSchema = require('../schema/User');
 const userService = require('../service/User');
 const neworError = require('../constant/error');
-const oauthHelper = require('../helper/oauth');
+const oAuth = require('../helper/oauth');
 const logger = require('../helper/logger');
 
 const signupV1 = async (request, response) => {
@@ -31,12 +31,6 @@ const signupV1 = async (request, response) => {
     log.end();
   }
 };
-
-const oAuth = new OAuthServer({
-  model: oauthHelper.getModel(),
-  allowEmptyState: true,
-  requireClientAuthentication: { password: false },
-});
 
 const loginV1 = async (request, response) => {
   const log = await logger.init(null, request.originalUrl, {

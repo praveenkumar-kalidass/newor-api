@@ -1,3 +1,5 @@
+const OAuthServer = require('oauth2-server');
+
 const clientService = require('../service/Client');
 const userService = require('../service/User');
 const authTokenService = require('../service/AuthToken');
@@ -28,6 +30,14 @@ const getModel = () => ({
       return null;
     }
   },
+  getAccessToken: async (accessToken) => {
+    try {
+      const token = await authTokenService.find(null, accessToken);
+      return token;
+    } catch (error) {
+      return null;
+    }
+  },
   getRefreshToken: (refreshToken) => ({
     refreshToken,
     client: {},
@@ -36,6 +46,10 @@ const getModel = () => ({
   revokeToken: () => true,
 });
 
-module.exports = {
-  getModel,
-};
+const oAuth = new OAuthServer({
+  model: getModel(),
+  allowEmptyState: true,
+  requireClientAuthentication: { password: false },
+});
+
+module.exports = oAuth;

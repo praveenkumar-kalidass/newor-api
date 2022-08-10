@@ -1,6 +1,9 @@
 const http = require('http');
+const OAuthServer = require('oauth2-server');
 
 const constant = require('../constant');
+const neworError = require('../constant/error');
+const oAuth = require('./oauth');
 const tracing = require('./tracing')(constant.APP.SERVICE_NAME);
 
 const traceStatusCode = {
@@ -73,4 +76,15 @@ const requestResponseMiddleware = (request, response, next) => {
   });
 };
 
-module.exports = { httpMiddleware, requestResponseMiddleware };
+const authMiddleware = async (request, response, next) => {
+  try {
+    const oauthRequest = new OAuthServer.Request(request);
+    const oauthResponse = new OAuthServer.Response(request);
+    await oAuth.authenticate(oauthRequest, oauthResponse, {});
+    next();
+  } catch (error) {
+    response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
+  }
+};
+
+module.exports = { httpMiddleware, requestResponseMiddleware, authMiddleware };

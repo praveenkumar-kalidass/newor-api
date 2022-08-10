@@ -4,6 +4,15 @@
     "info": {
       "title": "Newor API",
       "version": "1.0.0"
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
     }
   },
   "apis": [
