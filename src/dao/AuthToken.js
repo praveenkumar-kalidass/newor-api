@@ -34,7 +34,24 @@ const fetch = async (ctxt, by) => {
   }
 };
 
+const revoke = async (ctxt, by) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'auth_token_dao',
+    method: 'revoke',
+  });
+  try {
+    log.info('Deleting auth token from database');
+    const result = await model.AuthToken.destroy({ where: by });
+    log.info('Successfully revoked auth token from database');
+    return Boolean(result);
+  } catch (error) {
+    log.error(`Error while revoking auth token from database. Error: ${error}`);
+    throw error;
+  }
+};
+
 module.exports = {
   save,
   fetch,
+  revoke,
 };

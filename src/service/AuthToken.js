@@ -44,13 +44,39 @@ const findByType = async (ctxt, tokenType, token) => {
     }
     log.info(`Successfully found user auth token for token type ${tokenType}`);
     return {
-      accessToken: result.accessToken,
-      accessTokenExpiresAt: result.accessTokenExpiresAt,
+      ...result,
       client: { id: result.clientId },
       user: { id: result.userId },
     };
   } catch (error) {
-    log.error(`Error while persisting auth token. Error: ${error}`);
+    log.error(`Error while finding auth token. Error: ${error}`);
+    throw neworError.INTERNAL_SERVER_ERROR;
+  } finally {
+    if (!ctxt) {
+      log.end();
+    }
+  }
+};
+
+const remove = async (ctxt, accessToken, userId) => {
+  const log = await logger.init(ctxt, 'oauth2-server', {
+    class: 'auth_token_service',
+    method: 'remove',
+  });
+  try {
+    log.info(`Deleting access token for user with id ${userId}`);
+    const result = await authTokenDao.revoke(log.context, {
+      accessToken,
+      userId,
+    });
+    if (!result) {
+      log.info('Auth access token revoke failed.');
+      throw neworError.INTERNAL_SERVER_ERROR;
+    }
+    log.info(`Successfully revoked access token for user with id ${userId}`);
+    return { deleted: true };
+  } catch (error) {
+    log.error(`Error while removing auth token. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
   } finally {
     if (!ctxt) {
@@ -62,4 +88,5 @@ const findByType = async (ctxt, tokenType, token) => {
 module.exports = {
   persist,
   findByType,
+  remove,
 };

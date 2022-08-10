@@ -46,13 +46,20 @@ const getModel = () => ({
       return null;
     }
   },
-  revokeToken: () => true,
+  revokeToken: async (token) => {
+    try {
+      const { deleted } = await authTokenService.remove(null, token.accessToken, token.user.id);
+      return deleted;
+    } catch (error) {
+      return false;
+    }
+  },
 });
 
 const oAuth = new OAuthServer({
   model: getModel(),
   allowEmptyState: true,
-  requireClientAuthentication: { password: false },
+  alwaysIssueNewRefreshToken: true,
 });
 
 module.exports = oAuth;
