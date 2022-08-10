@@ -48,7 +48,7 @@ describe('AuthToken Service', () => {
     });
   });
 
-  describe('find', () => {
+  describe('findByType', () => {
     it('should successfully return token', async () => {
       authTokenDao.fetch.mockResolvedValueOnce({
         accessToken: 'test_access_token',
@@ -57,7 +57,7 @@ describe('AuthToken Service', () => {
         userId: 'test_user_id',
       });
 
-      await expect(authTokenService.find(mockContext, 'test_access_token'))
+      await expect(authTokenService.findByType(mockContext, 'accessToken', 'test_access_token'))
         .resolves.toStrictEqual({
           accessToken: 'test_access_token',
           accessTokenExpiresAt: '2022-08-10T13:54:30.578Z',
@@ -69,7 +69,7 @@ describe('AuthToken Service', () => {
     it('should throw error when token is not found', async () => {
       authTokenDao.fetch.mockResolvedValueOnce();
 
-      await expect(authTokenService.find(mockContext, 'test_access_token'))
+      await expect(authTokenService.findByType(mockContext, 'accessToken', 'test_access_token'))
         .rejects.toStrictEqual({
           status: 500,
           data: {

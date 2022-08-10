@@ -32,17 +32,20 @@ const getModel = () => ({
   },
   getAccessToken: async (accessToken) => {
     try {
-      const token = await authTokenService.find(null, accessToken);
+      const token = await authTokenService.findByType(null, 'accessToken', accessToken);
       return token;
     } catch (error) {
       return null;
     }
   },
-  getRefreshToken: (refreshToken) => ({
-    refreshToken,
-    client: {},
-    user: {},
-  }),
+  getRefreshToken: async (refreshToken) => {
+    try {
+      const token = await authTokenService.findByType(null, 'refreshToken', refreshToken);
+      return token;
+    } catch (error) {
+      return null;
+    }
+  },
   revokeToken: () => true,
 });
 

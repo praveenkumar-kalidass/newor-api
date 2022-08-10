@@ -30,19 +30,19 @@ const persist = async (ctxt, token, client, user) => {
   }
 };
 
-const find = async (ctxt, accessToken) => {
+const findByType = async (ctxt, tokenType, token) => {
   const log = await logger.init(ctxt, 'oauth2-server', {
     class: 'auth_token_service',
     method: 'persist',
   });
   try {
-    log.info('Getting user token based on authentication token');
-    const result = await authTokenDao.fetch(log.context, { accessToken });
+    log.info(`Getting user token based on authentication token type: ${tokenType}`);
+    const result = await authTokenDao.fetch(log.context, { [tokenType]: token });
     if (!result) {
       log.info('Authentication Token not found.');
       throw neworError.UNAUTHENTICATED;
     }
-    log.info('Successfully found user auth token');
+    log.info(`Successfully found user auth token for token type ${tokenType}`);
     return {
       accessToken: result.accessToken,
       accessTokenExpiresAt: result.accessTokenExpiresAt,
@@ -61,5 +61,5 @@ const find = async (ctxt, accessToken) => {
 
 module.exports = {
   persist,
-  find,
+  findByType,
 };

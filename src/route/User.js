@@ -116,7 +116,7 @@ router.post('/v1/login', requestResponseMiddleware, userController.loginV1);
  *    requestBody:
  *      required: true
  *      content:
- *        application/json:
+ *        application/x-www-form-urlencoded:
  *          schema:
  *            type: object
  *            properties:
