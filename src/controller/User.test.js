@@ -2,6 +2,7 @@ const httpMocks = require('node-mocks-http');
 
 const neworError = require('../constant/error');
 const userService = require('../service/User');
+const oAuth = require('../helper/oauth');
 const userController = require('./User');
 
 jest.mock('../service/User', () => ({
@@ -13,13 +14,6 @@ jest.mock('../service/User', () => ({
 }));
 jest.mock('../service/Client', () => ({
   authorize: jest.fn(),
-}));
-jest.mock('../helper/oauth', () => ({
-  getModel: () => ({
-    getClient: jest.fn((id) => ({ id, grants: ['password', 'authorization_code'], redirectUris: ['authorize'] })),
-    saveAuthorizationCode: jest.fn((code) => code),
-    saveToken: jest.fn((accessToken, client, user) => ({ ...accessToken, client, user })),
-  }),
 }));
 
 describe('User Controller', () => {
@@ -96,10 +90,14 @@ describe('User Controller', () => {
         grant_type: 'password',
         response_type: 'code',
       },
+      headers: {
+        location: 'authorize',
+      },
     });
 
     it('should redirect authorisation code as success response', async () => {
       userService.login.mockResolvedValueOnce({ id: 'user_id' });
+      oAuth.authorize.mockResolvedValueOnce();
 
       await userController.loginV1(requestMock, responseMock);
 

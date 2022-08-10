@@ -25,3 +25,9 @@ jest.mock('../src/helper/logger', () => ({
     end: jest.fn(),
   }),
 }));
+
+jest.mock('../src/helper/oauth', () => ({
+  authorize: jest.fn(),
+  authenticate: jest.fn(),
+  token: jest.fn(),
+}));
