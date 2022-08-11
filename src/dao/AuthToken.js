@@ -24,10 +24,21 @@ const fetch = async (ctxt, by) => {
   });
   try {
     log.info('Getting auth token from database');
-    const result = await model.AuthToken.findOne({ where: by });
+    const result = await model.AuthToken.findOne({
+      where: by,
+      include: {
+        model: model.User,
+        as: 'user',
+      },
+    });
     if (!result) return result;
     log.info('Successfully got auth token from database');
-    return result.dataValues;
+    const user = result.dataValues.user.dataValues;
+    delete user.password;
+    return {
+      ...result.dataValues,
+      user,
+    };
   } catch (error) {
     log.error(`Error while getting auth token from database. Error: ${error}`);
     throw error;

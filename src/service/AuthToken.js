@@ -46,7 +46,7 @@ const findByType = async (ctxt, tokenType, token) => {
     return {
       ...result,
       client: { id: result.clientId },
-      user: { id: result.userId },
+      user: result.user,
     };
   } catch (error) {
     log.error(`Error while finding auth token. Error: ${error}`);

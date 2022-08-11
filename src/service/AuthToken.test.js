@@ -55,6 +55,10 @@ describe('AuthToken Service', () => {
         accessToken: 'test_access_token',
         accessTokenExpiresAt: '2022-08-10T13:54:30.578Z',
         clientId: 'test_client_id',
+        user: {
+          id: 'test_user_id',
+          firstName: 'Test',
+        },
         userId: 'test_user_id',
       });
 
@@ -65,7 +69,10 @@ describe('AuthToken Service', () => {
           clientId: 'test_client_id',
           userId: 'test_user_id',
           client: { id: 'test_client_id' },
-          user: { id: 'test_user_id' },
+          user: {
+            id: 'test_user_id',
+            firstName: 'Test',
+          },
         });
     });
 
