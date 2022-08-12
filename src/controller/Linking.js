@@ -4,10 +4,8 @@ const neworError = require('../constant/error');
 const linkingSchema = require('../schema/Linking');
 const { getInvalidLink } = require('../helper/template');
 const constant = require('../constant');
-const { getAppConfig } = require('../../config');
+const { appConfig: config } = require('../../config');
 const logger = require('../helper/logger');
-
-const config = getAppConfig();
 
 const linkingV1 = async (request, response) => {
   const log = await logger.init(null, request.originalUrl, {

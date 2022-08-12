@@ -2,15 +2,13 @@ const passwordHash = require('password-hash');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
-const { getAppConfig } = require('../../config');
+const { appConfig: config } = require('../../config');
 const userDao = require('../dao/User');
 const neworError = require('../constant/error');
 const constant = require('../constant');
 const mailer = require('../helper/mailer');
 const template = require('../helper/template');
 const logger = require('../helper/logger');
-
-const config = getAppConfig();
 
 const signup = async (ctxt, user) => {
   const log = await logger.init(ctxt, null, {

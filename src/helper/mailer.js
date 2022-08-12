@@ -1,8 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const { getAppConfig } = require('../../config');
-
-const appConfig = getAppConfig();
+const { appConfig } = require('../../config');
 
 const mailer = nodemailer.createTransport({
   host: appConfig.smtpEndpoint,

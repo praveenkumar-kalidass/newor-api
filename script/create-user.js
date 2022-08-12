@@ -1,8 +1,6 @@
 const { Pool } = require('pg');
 
-const { getDatabaseConfig } = require('../config');
-
-const config = getDatabaseConfig();
+const { databaseConfig: config } = require('../config');
 
 const pool = new Pool({
   user: process.env.DATABASE_SUPERUSER,
