@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 const authTokenService = require('./AuthToken');
 const authTokenDao = require('../dao/AuthToken');
 
@@ -5,6 +7,9 @@ jest.mock('../dao/AuthToken', () => ({
   save: jest.fn(),
   fetch: jest.fn(),
   revoke: jest.fn(),
+}));
+jest.mock('jsonwebtoken', () => ({
+  sign: jest.fn(),
 }));
 
 describe('AuthToken Service', () => {
@@ -61,6 +66,7 @@ describe('AuthToken Service', () => {
         },
         userId: 'test_user_id',
       });
+      jwt.sign.mockReturnValueOnce('test_id_token');
 
       await expect(authTokenService.findByType(mockContext, 'accessToken', 'test_access_token'))
         .resolves.toStrictEqual({
@@ -72,6 +78,7 @@ describe('AuthToken Service', () => {
           user: {
             id: 'test_user_id',
             firstName: 'Test',
+            idToken: 'test_id_token',
           },
         });
     });

@@ -1,3 +1,6 @@
+const jwt = require('jsonwebtoken');
+
+const { appConfig: config } = require('../../config');
 const authTokenDao = require('../dao/AuthToken');
 const neworError = require('../constant/error');
 const logger = require('../helper/logger');
@@ -46,7 +49,10 @@ const findByType = async (ctxt, tokenType, token) => {
     return {
       ...result,
       client: { id: result.clientId },
-      user: result.user,
+      user: {
+        ...result.user,
+        idToken: jwt.sign(result.user, config.idTokenSecret),
+      },
     };
   } catch (error) {
     log.error(`Error while finding auth token. Error: ${error}`);

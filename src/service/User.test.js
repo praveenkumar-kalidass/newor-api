@@ -54,8 +54,13 @@ describe('User Service', () => {
     it('should successfully login user', async () => {
       const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: true };
       userDao.fetch.mockResolvedValueOnce(expectedResponse);
+      jwt.sign.mockReturnValueOnce('test_id_token');
 
-      await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
+      await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual({
+        email: 'test@test.com',
+        isVerified: true,
+        idToken: 'test_id_token',
+      });
     });
 
     it('should throw user not found error', async () => {

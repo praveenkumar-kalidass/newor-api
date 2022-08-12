@@ -62,7 +62,10 @@ const login = async (ctxt, user) => {
     if (passwordHash.verify(user.password, result.password)) {
       log.info('Successfully verified user credentials.');
       delete result.password;
-      return result;
+      return {
+        ...result,
+        idToken: jwt.sign(result, config.idTokenSecret),
+      };
     }
     log.info('User credentials verification failed.');
     throw neworError.INVALID_CREDENTIALS;
