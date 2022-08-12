@@ -1,6 +1,8 @@
 const http = require('http');
 const OAuthServer = require('oauth2-server');
+const jwt = require('jsonwebtoken');
 
+const { appConfig: config } = require('../../config');
 const constant = require('../constant');
 const neworError = require('../constant/error');
 const oAuth = require('./oauth');
@@ -77,14 +79,44 @@ const requestResponseMiddleware = (request, response, next) => {
 };
 
 const authMiddleware = async (request, response, next) => {
-  try {
-    const oauthRequest = new OAuthServer.Request(request);
-    const oauthResponse = new OAuthServer.Response(request);
-    await oAuth.authenticate(oauthRequest, oauthResponse, {});
-    next();
-  } catch (error) {
-    response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
-  }
+  tracing.startActiveSpan(`${request.originalUrl} | authentication`, {
+    kind: 1,
+  }, async (span) => {
+    try {
+      span.addEvent('Initiation check for authentication and identification');
+      const idToken = request.get(constant.REQUEST.IDENTIFICATION_HEADER);
+      if (!idToken) {
+        span.addEvent('No identification!');
+        throw neworError.UNIDENTIFIED;
+      }
+      const isVerified = jwt.verify(idToken, config.idTokenSecret);
+      if (!isVerified) {
+        span.addEvent('Identification verification failed!');
+        throw neworError.UNAUTHENTICATED;
+      }
+      span.addEvent('Identification success!');
+      const { email, mobileNumber } = jwt.decode(idToken, config.idTokenSecret);
+      span.setAttributes({
+        'user.email': email,
+        'user.mobileNumber': mobileNumber,
+      });
+      const oauthRequest = new OAuthServer.Request(request);
+      const oauthResponse = new OAuthServer.Response(request);
+      await oAuth.authenticate(oauthRequest, oauthResponse, {});
+      span.addEvent('Authentication success!');
+      next();
+    } catch (error) {
+      if (neworError.isNeworError(error)) {
+        span.addEvent(`Failure at Authentication!. Error: ${JSON.stringify(error)}`);
+        response.status(error.status).send(error.data);
+        return;
+      }
+      span.addEvent(`Failure at Authentication!. Error: ${error}`);
+      response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
+    } finally {
+      span.end();
+    }
+  });
 };
 
 module.exports = { httpMiddleware, requestResponseMiddleware, authMiddleware };

@@ -16,8 +16,14 @@ const APP = {
   SERVICE_NAME: 'newor-api',
 };
 
+const REQUEST = {
+  IDENTIFICATION_HEADER: 'Identification',
+  AUTHORIZATION_HEADER: 'Authorization',
+};
+
 module.exports = {
   AUTH_GRANT_TYPE,
   VERIFICATION_MAIL,
   APP,
+  REQUEST,
 };

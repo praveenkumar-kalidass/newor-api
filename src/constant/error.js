@@ -49,6 +49,13 @@ const errors = {
       description: 'Authentication failed.',
     },
   },
+  UNIDENTIFIED: {
+    status: 401,
+    data: {
+      code: 'NEWOR_UNIDENTIFIED',
+      description: 'Identification token not valid.',
+    },
+  },
 };
 
 module.exports = errors;
