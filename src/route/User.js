@@ -2,7 +2,7 @@ const express = require('express');
 
 const userController = require('../controller/User');
 const constant = require('../constant');
-const { requestResponseMiddleware } = require('../helper/middleware');
+const { requestResponseMiddleware, authMiddleware } = require('../helper/middleware');
 
 const router = express.Router();
 
@@ -246,5 +246,24 @@ router.post('/v1/forgot-password', requestResponseMiddleware, userController.for
  *        description: Reset failed
  */
 router.put('/v1/reset-password', requestResponseMiddleware, userController.resetPasswordV1);
+
+/**
+ * @swagger
+ * /api/user/v1/logout:
+ *  delete:
+ *    summary: Logout user
+ *    description: logout current session of user
+ *    tags:
+ *      - User
+ *    security:
+ *      - bearerAuth: []
+ *      - idAuth: []
+ *    responses:
+ *      200:
+ *        description: Logout success
+ *      500:
+ *        description: Logout failed
+ */
+router.delete('/v1/logout', requestResponseMiddleware, authMiddleware, userController.logoutV1);
 
 module.exports = router;

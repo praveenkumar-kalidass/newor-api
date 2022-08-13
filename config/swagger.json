@@ -11,6 +11,11 @@
           "type": "http",
           "scheme": "bearer",
           "bearerFormat": "JWT"
+        },
+        "idAuth": {
+          "type": "apiKey",
+          "in": "header",
+          "name": "Identification"
         }
       }
     }

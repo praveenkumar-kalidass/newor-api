@@ -26,3 +26,8 @@ jest.mock('../src/helper/oauth', () => ({
   authenticate: jest.fn(),
   token: jest.fn(),
 }));
+
+jest.mock('../src/helper/token', () => ({
+  getUser: jest.fn(),
+  getAccessToken: jest.fn(),
+}));

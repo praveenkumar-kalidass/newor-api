@@ -3,9 +3,11 @@ const OAuthServer = require('oauth2-server');
 
 const userSchema = require('../schema/User');
 const userService = require('../service/User');
+const authTokenService = require('../service/AuthToken');
 const neworError = require('../constant/error');
 const oAuth = require('../helper/oauth');
 const logger = require('../helper/logger');
+const token = require('../helper/token');
 
 const signupV1 = async (request, response) => {
   const log = await logger.init(null, request.originalUrl, {
@@ -162,6 +164,26 @@ const resetPasswordV1 = async (request, response) => {
   }
 };
 
+const logoutV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'logoutV1',
+  });
+  try {
+    log.info('Initiating logout v1 api');
+    const accessToken = await token.getAccessToken(request);
+    const { id } = await token.getUser(request);
+    const result = await authTokenService.remove(log.context, accessToken, id);
+    response.status(200).send(result);
+    log.info('Successfully completed logout v1 api.');
+  } catch (error) {
+    log.error(`Error while logging out user. Error: ${JSON.stringify(error)}`);
+    response.status(error.status).send(error.data);
+  } finally {
+    log.end();
+  }
+};
+
 module.exports = {
   signupV1,
   loginV1,
@@ -169,4 +191,5 @@ module.exports = {
   verifyV1,
   forgotPasswordV1,
   resetPasswordV1,
+  logoutV1,
 };

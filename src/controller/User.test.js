@@ -2,7 +2,9 @@ const httpMocks = require('node-mocks-http');
 
 const neworError = require('../constant/error');
 const userService = require('../service/User');
+const authTokenService = require('../service/AuthToken');
 const oAuth = require('../helper/oauth');
+const token = require('../helper/token');
 const userController = require('./User');
 
 jest.mock('../service/User', () => ({
@@ -11,6 +13,9 @@ jest.mock('../service/User', () => ({
   verify: jest.fn(),
   forgotPassword: jest.fn(),
   resetPassword: jest.fn(),
+}));
+jest.mock('../service/AuthToken', () => ({
+  remove: jest.fn(),
 }));
 jest.mock('../service/Client', () => ({
   authorize: jest.fn(),
@@ -223,6 +228,38 @@ describe('User Controller', () => {
       expect(responseMock.status).toHaveBeenCalledWith(500);
       expect(responseMock.status.mock.results[0].value.send)
         .toHaveBeenCalledWith(expectedError.data);
+    });
+  });
+
+  describe('logoutV1', () => {
+    const requestMock = httpMocks.createRequest({
+      method: 'DELETE',
+      url: '/api/user/v1/logout',
+    });
+
+    it('should successfully logout', async () => {
+      token.getAccessToken.mockResolvedValueOnce('test_access_token');
+      token.getUser.mockResolvedValueOnce({ id: 'test_user_id' });
+      authTokenService.remove.mockResolvedValueOnce({ deleted: true });
+
+      await userController.logoutV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        deleted: true,
+      });
+    });
+
+    it('should return error when logout is failed', async () => {
+      token.getAccessToken.mockResolvedValueOnce('test_access_token');
+      token.getUser.mockResolvedValueOnce({ id: 'test_user_id' });
+      authTokenService.remove.mockRejectedValueOnce(neworError.UNAUTHENTICATED);
+
+      await userController.logoutV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(neworError.UNAUTHENTICATED.status);
+      expect(responseMock.status.mock.results[0].value.send)
+        .toHaveBeenCalledWith(neworError.UNAUTHENTICATED.data);
     });
   });
 });
