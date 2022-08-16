@@ -40,6 +40,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false,
       field: 'is_verified',
     },
+    picture: {
+      type: Sequelize.STRING(50),
+      unique: true,
+      filed: 'picture',
+    },
     createdAt: {
       type: DataTypes.DATE,
       field: 'created_at',
