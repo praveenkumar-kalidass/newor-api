@@ -6,7 +6,7 @@ const { appConfig: config } = require('../../config');
 const userDao = require('../dao/User');
 const neworError = require('../constant/error');
 const constant = require('../constant');
-const mailer = require('../helper/mailer');
+const aws = require('../helper/aws');
 const template = require('../helper/template');
 const logger = require('../helper/logger');
 
@@ -25,7 +25,7 @@ const signup = async (ctxt, user) => {
       password: passwordHash.generate(user.password),
     });
     log.info('Initiating verification mail to user.');
-    await mailer.sendMail({
+    await aws.sendMail({
       from: config.emailId,
       to: result.email,
       subject: constant.VERIFICATION_MAIL.SUBJECT,
@@ -129,7 +129,7 @@ const forgotPassword = async (ctxt, email) => {
       throw neworError.EMAIL_NOT_VERIFIED;
     }
     const resetToken = jwt.sign({ id: result.id }, config.passwordResetTokenSecret);
-    await mailer.sendMail({
+    await aws.sendMail({
       from: config.emailId,
       to: result.email,
       subject: constant.VERIFICATION_MAIL.PASSWORD_RESET,

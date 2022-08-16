@@ -1,5 +1,5 @@
-jest.mock('nodemailer', () => ({
-  createTransport: () => ({ sendMail: jest.fn() }),
+jest.mock('../src/helper/aws', () => ({
+  sendMail: jest.fn(),
 }));
 
 jest.mock('.', () => {

@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const userService = require('./User');
 const userDao = require('../dao/User');
-const mailer = require('../helper/mailer');
+const aws = require('../helper/aws');
 
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),
@@ -32,7 +32,7 @@ describe('User Service', () => {
     it('should successfully signup user', async () => {
       const expectedResponse = { id: 1, username: 'Test', password: 'password' };
       userDao.save.mockResolvedValueOnce(expectedResponse);
-      mailer.sendMail.mockResolvedValueOnce();
+      aws.sendMail.mockResolvedValueOnce();
 
       await expect(userService.signup(mockContext, { username: 'Test', password: 'test@123' })).resolves.toStrictEqual(expectedResponse);
     });
@@ -157,7 +157,7 @@ describe('User Service', () => {
   describe('forgotPassword', () => {
     it('should successfully complete forgot password', async () => {
       userDao.fetch.mockResolvedValueOnce({ email: 'test@newor.com', isVerified: true });
-      mailer.sendMail.mockResolvedValueOnce();
+      aws.sendMail.mockResolvedValueOnce();
 
       await expect(userService.forgotPassword(mockContext, 'test@newor.com')).resolves.toStrictEqual({
         email: 'test@newor.com',
