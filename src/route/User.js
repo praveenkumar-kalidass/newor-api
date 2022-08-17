@@ -266,4 +266,35 @@ router.put('/v1/reset-password', requestResponseMiddleware, userController.reset
  */
 router.delete('/v1/logout', requestResponseMiddleware, authMiddleware, userController.logoutV1);
 
+/**
+ * @swagger
+ * /api/user/v1/picture:
+ *  put:
+ *    summary: Update user picture
+ *    description: Change user profile picture
+ *    tags:
+ *      - User
+ *    security:
+ *      - bearerAuth: []
+ *      - idAuth: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        multipart/form-data:
+ *          schema:
+ *            type: object
+ *            properties:
+ *              picture:
+ *                type: string
+ *                format: binary
+ *            required:
+ *              - picture
+ *    responses:
+ *      200:
+ *        description: Picture update success
+ *      500:
+ *        description: Picture update failed
+ */
+router.put('/v1/picture', requestResponseMiddleware, authMiddleware, userController.pictureV1);
+
 module.exports = router;

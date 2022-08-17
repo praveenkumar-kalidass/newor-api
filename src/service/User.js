@@ -9,6 +9,7 @@ const constant = require('../constant');
 const aws = require('../helper/aws');
 const template = require('../helper/template');
 const logger = require('../helper/logger');
+const { getImageUri } = require('../helper/util');
 
 const signup = async (ctxt, user) => {
   const log = await logger.init(ctxt, null, {
@@ -62,8 +63,17 @@ const login = async (ctxt, user) => {
     if (passwordHash.verify(user.password, result.password)) {
       log.info('Successfully verified user credentials.');
       delete result.password;
+      let picture = '';
+      if (result.picture) {
+        const { Body: body } = await aws.getFile({
+          bucket: config.userPictureBucket,
+          key: result.picture,
+        });
+        picture = getImageUri(body, result.picture);
+      }
       return {
         ...result,
+        picture,
         idToken: jwt.sign(result, config.idTokenSecret),
       };
     }
@@ -177,10 +187,50 @@ const resetPassword = async (ctxt, data) => {
   }
 };
 
+const updatePicture = async (ctxt, file, userId) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'user_service',
+    method: 'uploadPicture',
+  });
+  try {
+    log.info('Initiating update user picture');
+    const extension = {
+      'image/png': '.png',
+      'image/jpeg': '.jpeg',
+    };
+    const fileName = `${userId}${extension[file.mimetype]}`;
+    log.info(`Uploading file ${fileName} to s3 bucket`);
+    await aws.uploadFile({
+      bucket: config.userPictureBucket,
+      key: fileName,
+      body: file.data,
+    });
+    log.info(`file ${fileName} uploaded successfully to s3 bucket`);
+    await userDao.update(ctxt, {
+      id: userId,
+    }, {
+      picture: fileName,
+    });
+    log.info('Successfully updated user details with latest picture');
+    const { Body: body } = await aws.getFile({
+      bucket: config.userPictureBucket,
+      key: fileName,
+    });
+    return {
+      picture: fileName,
+      body: getImageUri(body, fileName),
+    };
+  } catch (error) {
+    log.error(`Error while updating picture for user. Error: ${error}`);
+    throw neworError.INTERNAL_SERVER_ERROR;
+  }
+};
+
 module.exports = {
   signup,
   login,
   verify,
   forgotPassword,
   resetPassword,
+  updatePicture,
 };

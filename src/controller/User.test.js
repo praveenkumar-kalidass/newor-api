@@ -13,6 +13,7 @@ jest.mock('../service/User', () => ({
   verify: jest.fn(),
   forgotPassword: jest.fn(),
   resetPassword: jest.fn(),
+  updatePicture: jest.fn(),
 }));
 jest.mock('../service/AuthToken', () => ({
   remove: jest.fn(),
@@ -260,6 +261,50 @@ describe('User Controller', () => {
       expect(responseMock.status).toHaveBeenCalledWith(neworError.UNAUTHENTICATED.status);
       expect(responseMock.status.mock.results[0].value.send)
         .toHaveBeenCalledWith(neworError.UNAUTHENTICATED.data);
+    });
+  });
+
+  describe('pictureV1', () => {
+    const requestMock = httpMocks.createRequest({
+      method: 'PUT',
+      url: '/api/user/v1/picture',
+      files: {
+        picture: {
+          data: 'test',
+          mimetype: 'image/png',
+        },
+      },
+    });
+
+    it('should successfully update the user picture', async () => {
+      token.getUser.mockResolvedValueOnce({ id: 'test_user_id' });
+      userService.updatePicture.mockResolvedValueOnce({ data: 'test' });
+
+      await userController.pictureV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        data: 'test',
+      });
+    });
+
+    it('should throw error when user service throws error', async () => {
+      token.getUser.mockResolvedValueOnce({ id: 'test_user_id' });
+      userService.updatePicture.mockRejectedValueOnce({
+        status: 500,
+        data: {
+          code: 'NEWOR_INTERNAL_SERVER_ERROR',
+          description: 'Internal Server error',
+        },
+      });
+
+      await userController.pictureV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(500);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        code: 'NEWOR_INTERNAL_SERVER_ERROR',
+        description: 'Internal Server error',
+      });
     });
   });
 });

@@ -28,4 +28,26 @@ const sendMail = ({
   },
 }).promise();
 
-module.exports = { sendMail };
+const uploadFile = ({
+  bucket,
+  key,
+  body,
+}) => new AWS.S3({
+  apiVersion: '2006-03-01',
+}).upload({
+  Bucket: bucket,
+  Key: key,
+  Body: body,
+}).promise();
+
+const getFile = ({
+  bucket,
+  key,
+}) => new AWS.S3({
+  apiVersion: '2006-03-01',
+}).getObject({
+  Bucket: bucket,
+  Key: key,
+}).promise();
+
+module.exports = { sendMail, uploadFile, getFile };

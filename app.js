@@ -5,6 +5,7 @@ const http = require('http');
 const swagger = require('swagger-ui-express');
 const swaggerDoc = require('swagger-jsdoc');
 const path = require('path');
+const fileUpload = require('express-fileupload');
 
 const swaggerConfig = require('./config/swagger.json');
 const router = require('./src/route');
@@ -15,6 +16,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(fileUpload());
 
 /**
  * Get port from environment and store in Express.

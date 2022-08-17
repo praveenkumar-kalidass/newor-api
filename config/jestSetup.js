@@ -1,5 +1,7 @@
 jest.mock('../src/helper/aws', () => ({
   sendMail: jest.fn(),
+  uploadFile: jest.fn(),
+  getFile: jest.fn(),
 }));
 
 jest.mock('.', () => {

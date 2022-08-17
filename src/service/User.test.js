@@ -52,14 +52,20 @@ describe('User Service', () => {
 
   describe('login', () => {
     it('should successfully login user', async () => {
-      const expectedResponse = { email: 'test@test.com', password: passwordHash.generate('test@123'), isVerified: true };
-      userDao.fetch.mockResolvedValueOnce(expectedResponse);
+      userDao.fetch.mockResolvedValueOnce({
+        email: 'test@test.com',
+        password: passwordHash.generate('test@123'),
+        isVerified: true,
+        picture: 'test.png',
+      });
       jwt.sign.mockReturnValueOnce('test_id_token');
+      aws.getFile.mockResolvedValueOnce({ Body: 'test_image' });
 
       await expect(userService.login(mockContext, { email: 'test@test.com', password: 'test@123' })).resolves.toStrictEqual({
         email: 'test@test.com',
         isVerified: true,
         idToken: 'test_id_token',
+        picture: 'data:image/png;base64,',
       });
     });
 
@@ -224,6 +230,33 @@ describe('User Service', () => {
       await expect(userService.resetPassword(mockContext, { token: 'testtoken123', password: '123456' })).resolves.toStrictEqual({
         email: 'test@newor.com',
       });
+    });
+  });
+
+  describe('updatePicture', () => {
+    it('should update user picture successfully', async () => {
+      aws.uploadFile.mockResolvedValueOnce();
+      userDao.update.mockResolvedValueOnce();
+      aws.getFile.mockResolvedValueOnce({ Body: 'test' });
+
+      await expect(userService.updatePicture(mockContext, { mimetype: 'image/png', data: 'test' }, 'test_user_id'))
+        .resolves.toStrictEqual({
+          body: 'data:image/png;base64,',
+          picture: 'test_user_id.png',
+        });
+    });
+
+    it('should throw error when user picture update failed', async () => {
+      aws.uploadFile.mockRejectedValueOnce();
+
+      await expect(userService.updatePicture(mockContext, { mimetype: 'image/png', data: 'test' }, 'test_user_id'))
+        .rejects.toStrictEqual({
+          status: 500,
+          data: {
+            code: 'NEWOR_INTERNAL_SERVER_ERROR',
+            description: 'Internal Server error',
+          },
+        });
     });
   });
 });

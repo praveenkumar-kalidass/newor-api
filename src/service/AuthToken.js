@@ -4,6 +4,8 @@ const { appConfig: config } = require('../../config');
 const authTokenDao = require('../dao/AuthToken');
 const neworError = require('../constant/error');
 const logger = require('../helper/logger');
+const aws = require('../helper/aws');
+const { getImageUri } = require('../helper/util');
 
 const persist = async (ctxt, token, client, user) => {
   const log = await logger.init(ctxt, 'oauth2-server', {
@@ -46,11 +48,21 @@ const findByType = async (ctxt, tokenType, token) => {
       throw neworError.UNAUTHENTICATED;
     }
     log.info(`Successfully found user auth token for token type ${tokenType}`);
+    delete result.user.password;
+    let picture = '';
+    if (result.user.picture) {
+      const { Body: body } = await aws.getFile({
+        bucket: config.userPictureBucket,
+        key: result.user.picture,
+      });
+      picture = getImageUri(body, result.user.picture);
+    }
     return {
       ...result,
       client: { id: result.clientId },
       user: {
         ...result.user,
+        picture,
         idToken: jwt.sign(result.user, config.idTokenSecret),
       },
     };

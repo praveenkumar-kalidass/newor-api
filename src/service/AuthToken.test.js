@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 
 const authTokenService = require('./AuthToken');
 const authTokenDao = require('../dao/AuthToken');
+const aws = require('../helper/aws');
 
 jest.mock('../dao/AuthToken', () => ({
   save: jest.fn(),
@@ -63,10 +64,12 @@ describe('AuthToken Service', () => {
         user: {
           id: 'test_user_id',
           firstName: 'Test',
+          picture: 'test.png',
         },
         userId: 'test_user_id',
       });
       jwt.sign.mockReturnValueOnce('test_id_token');
+      aws.getFile.mockResolvedValueOnce({ Body: 'test_image' });
 
       await expect(authTokenService.findByType(mockContext, 'accessToken', 'test_access_token'))
         .resolves.toStrictEqual({
@@ -79,6 +82,7 @@ describe('AuthToken Service', () => {
             id: 'test_user_id',
             firstName: 'Test',
             idToken: 'test_id_token',
+            picture: 'data:image/png;base64,',
           },
         });
     });

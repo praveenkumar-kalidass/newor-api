@@ -3,5 +3,6 @@
   "emailVerificationTokenSecret": "test_secret",
   "emailId": "test@test.com",
   "passwordResetTokenSecret": "test_secret",
-  "idTokenSecret": "test_secret"
+  "idTokenSecret": "test_secret",
+  "userPictureBucket": "test-bucket"
 }

@@ -99,7 +99,6 @@ const verifyV1 = async (request, response) => {
     const result = await userService.verify(log.context, request.body.token);
     response.status(200).send(result);
     log.info('Successfully completed user verify v1 api.');
-    log.end();
   } catch (error) {
     if (joi.isError(error)) {
       const { BAD_REQUEST } = neworError;
@@ -184,6 +183,37 @@ const logoutV1 = async (request, response) => {
   }
 };
 
+const pictureV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'pictureV1',
+  });
+  try {
+    log.info('Initiating picture v1 api');
+    if (!request.files) {
+      throw neworError.BAD_REQUEST;
+    }
+    await userSchema.pictureV1.validateAsync({
+      picture: request.files.picture.mimetype,
+    });
+    const { id } = await token.getUser(request);
+    const result = await userService.updatePicture(log.context, request.files.picture, id);
+    response.status(200).send(result);
+    log.info('Successfully completed picture v1 api.');
+  } catch (error) {
+    if (joi.isError(error)) {
+      const { BAD_REQUEST } = neworError;
+      log.error(`Error while validating logout v1 request. Error: ${error}`);
+      response.status(BAD_REQUEST.status).send(BAD_REQUEST.data);
+      return;
+    }
+    log.error(`Error while updating picture for user. Error: ${JSON.stringify(error)}`);
+    response.status(error.status).send(error.data);
+  } finally {
+    log.end();
+  }
+};
+
 module.exports = {
   signupV1,
   loginV1,
@@ -192,4 +222,5 @@ module.exports = {
   forgotPasswordV1,
   resetPasswordV1,
   logoutV1,
+  pictureV1,
 };

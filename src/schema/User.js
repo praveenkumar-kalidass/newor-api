@@ -33,10 +33,15 @@ const resetPasswordV1 = joi.object({
     .required(),
 });
 
+const pictureV1 = joi.object({
+  picture: joi.any().allow('image/png', 'image/jpeg'),
+});
+
 module.exports = {
   signupV1,
   loginV1,
   verifyV1,
   forgotPasswordV1,
   resetPasswordV1,
+  pictureV1,
 };
