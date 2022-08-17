@@ -217,8 +217,7 @@ const updatePicture = async (ctxt, file, userId) => {
       key: fileName,
     });
     return {
-      picture: fileName,
-      body: getImageUri(body, fileName),
+      picture: getImageUri(body, fileName),
     };
   } catch (error) {
     log.error(`Error while updating picture for user. Error: ${error}`);

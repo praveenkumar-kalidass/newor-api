@@ -241,8 +241,7 @@ describe('User Service', () => {
 
       await expect(userService.updatePicture(mockContext, { mimetype: 'image/png', data: 'test' }, 'test_user_id'))
         .resolves.toStrictEqual({
-          body: 'data:image/png;base64,',
-          picture: 'test_user_id.png',
+          picture: 'data:image/png;base64,',
         });
     });
 

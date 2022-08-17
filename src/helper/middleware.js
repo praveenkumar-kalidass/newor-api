@@ -82,6 +82,11 @@ const authMiddleware = async (request, response, next) => {
   tracing.startActiveSpan(`${request.originalUrl} | authentication`, {
     kind: 1,
   }, async (span) => {
+    const actualResponse = { end: response.end };
+    response.end = (...args) => {
+      span.end();
+      return actualResponse.end.apply(response, args);
+    };
     try {
       span.addEvent('Initiation check for authentication and identification');
       const idToken = request.get(constant.REQUEST.IDENTIFICATION_HEADER);
@@ -113,8 +118,6 @@ const authMiddleware = async (request, response, next) => {
       }
       span.addEvent(`Failure at Authentication!. Error: ${error}`);
       response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
-    } finally {
-      span.end();
     }
   });
 };
