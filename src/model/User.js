@@ -1,5 +1,3 @@
-const Sequelize = require('sequelize');
-
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     id: {
@@ -8,40 +6,40 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
     },
     firstName: {
-      type: Sequelize.STRING(25),
+      type: DataTypes.STRING(25),
       allowNull: false,
       field: 'first_name',
     },
     lastName: {
-      type: Sequelize.STRING(25),
+      type: DataTypes.STRING(25),
       allowNull: false,
       field: 'last_name',
     },
     email: {
-      type: Sequelize.STRING(50),
+      type: DataTypes.STRING(50),
       allowNull: false,
       unique: true,
       field: 'email',
     },
     password: {
-      type: Sequelize.STRING(56),
+      type: DataTypes.STRING(56),
       allowNull: false,
       field: 'password',
     },
     mobileNumber: {
-      type: Sequelize.STRING(10),
+      type: DataTypes.STRING(10),
       allowNull: false,
       unique: true,
       field: 'mobile_number',
     },
     isVerified: {
-      type: Sequelize.BOOLEAN,
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: false,
       field: 'is_verified',
     },
     picture: {
-      type: Sequelize.STRING(50),
+      type: DataTypes.STRING(50),
       unique: true,
       filed: 'picture',
     },

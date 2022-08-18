@@ -1,19 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
-  const Client = sequelize.define('Client', {
+  const Asset = sequelize.define('Asset', {
     id: {
       type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
-    name: {
-      type: DataTypes.STRING(25),
+    userId: {
+      type: DataTypes.UUID,
       allowNull: false,
-      field: 'name',
+      field: 'user_id',
     },
-    secret: {
-      type: DataTypes.STRING(56),
-      allowNull: false,
-      field: 'secret',
+    list: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
+      defaultValue: [],
+      field: 'list',
     },
     createdAt: {
       type: DataTypes.DATE,
@@ -27,5 +27,13 @@ module.exports = (sequelize, DataTypes) => {
     freezeTableName: true,
     timestamps: true,
   });
-  return Client;
+  Asset.associate = (models) => {
+    Asset.belongsTo(models.User, {
+      as: 'user',
+      foreignKey: 'userId',
+      targetKey: 'id',
+      onDelete: 'SET NULL',
+    });
+  };
+  return Asset;
 };
