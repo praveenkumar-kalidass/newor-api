@@ -1,9 +1,10 @@
 const passwordHash = require('password-hash');
-const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
 const { appConfig: config } = require('../../config');
 const userDao = require('../dao/User');
+const assetDao = require('../dao/Asset');
+const liabilityDao = require('../dao/Liability');
 const neworError = require('../constant/error');
 const constant = require('../constant');
 const aws = require('../helper/aws');
@@ -18,14 +19,16 @@ const signup = async (ctxt, user) => {
   });
   try {
     log.info('Initiating signup user.');
-    const id = uuidv4();
-    const verificationToken = jwt.sign({ id }, config.emailVerificationTokenSecret);
     const result = await userDao.save(ctxt, {
       ...user,
-      id,
       password: passwordHash.generate(user.password),
     });
+    await Promise.all([
+      assetDao.init(ctxt, { userId: result.id }),
+      liabilityDao.init(ctxt, { userId: result.id }),
+    ]);
     log.info('Initiating verification mail to user.');
+    const verificationToken = jwt.sign({ id: result.id }, config.emailVerificationTokenSecret);
     await aws.sendMail({
       from: config.emailId,
       to: result.email,

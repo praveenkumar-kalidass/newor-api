@@ -15,6 +15,12 @@ jest.mock('../dao/User', () => ({
   fetch: jest.fn(),
   update: jest.fn(),
 }));
+jest.mock('../dao/Asset', () => ({
+  init: jest.fn(),
+}));
+jest.mock('../dao/Liability', () => ({
+  init: jest.fn(),
+}));
 jest.mock('../helper/template', () => ({
   getVerificationMail: (data) => data,
   getVerificationStatus: (data) => data,
