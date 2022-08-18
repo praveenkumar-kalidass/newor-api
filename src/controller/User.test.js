@@ -137,6 +137,46 @@ describe('User Controller', () => {
     });
   });
 
+  describe('authorizeV1', () => {
+    const requestMock = httpMocks.createRequest({
+      method: 'POST',
+      url: '/api/v1/authorize',
+      body: {
+        clientId: 'test_client_id',
+        clientSecret: 'test_secret',
+        grantType: 'refresh_token',
+        refreshToken: 'test_refresh_token',
+      },
+    });
+
+    it('should successfully authorize', async () => {
+      oAuth.token.mockResolvedValueOnce({ accessToken: 'test_access_token' });
+
+      await userController.authorizeV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({ accessToken: 'test_access_token' });
+    });
+
+    it('should return error when authorization failed', async () => {
+      oAuth.token.mockRejectedValueOnce({
+        status: 500,
+        data: {
+          code: 'NEWOR_INTERNAL_SERVER_ERROR',
+          description: 'Internal Server error',
+        },
+      });
+
+      await userController.authorizeV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(500);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        code: 'NEWOR_INTERNAL_SERVER_ERROR',
+        description: 'Internal Server error',
+      });
+    });
+  });
+
   describe('verifyV1', () => {
     const requestMock = httpMocks.createRequest({
       method: 'PUT',
@@ -154,6 +194,24 @@ describe('User Controller', () => {
 
       expect(responseMock.status).toHaveBeenCalledWith(200);
       expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith(expectedResponse);
+    });
+
+    it('should return error when verification fails', async () => {
+      userService.verify.mockRejectedValueOnce({
+        status: 500,
+        data: {
+          code: 'NEWOR_INTERNAL_SERVER_ERROR',
+          description: 'Internal Server error',
+        },
+      });
+
+      await userController.verifyV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(500);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        code: 'NEWOR_INTERNAL_SERVER_ERROR',
+        description: 'Internal Server error',
+      });
     });
   });
 
@@ -285,6 +343,27 @@ describe('User Controller', () => {
       expect(responseMock.status).toHaveBeenCalledWith(200);
       expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
         data: 'test',
+      });
+    });
+
+    it('should throw bad request error when request file type is not valid', async () => {
+      const noFileRequestMock = httpMocks.createRequest({
+        method: 'PUT',
+        url: '/api/user/v1/picture',
+        files: {
+          picture: {
+            data: 'test',
+            mimetype: 'image/gif',
+          },
+        },
+      });
+
+      await userController.pictureV1(noFileRequestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(400);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        code: 'NEWOR_BAD_REQUEST',
+        description: 'Bad request',
       });
     });
 

@@ -34,7 +34,7 @@ const resetPasswordV1 = joi.object({
 });
 
 const pictureV1 = joi.object({
-  picture: joi.any().allow('image/png', 'image/jpeg'),
+  picture: joi.any().valid('image/png', 'image/jpg', 'image/jpeg'),
 });
 
 module.exports = {
