@@ -35,4 +35,21 @@ const fetch = async (ctxt, by) => {
   }
 };
 
-module.exports = { init, fetch };
+const update = async (ctxt, by, asset) => {
+  const log = await logger.init(ctxt, null, {
+    class: 'asset_dao',
+    method: 'update',
+  });
+  try {
+    log.info('Updating asset in database');
+    const result = await model.Asset.update(asset, { where: by });
+    if (!result) return result;
+    log.info('Successfully updated asset in database');
+    return result.dataValues;
+  } catch (error) {
+    log.error(`Error while updating asset in database. Error: ${error}`);
+    throw error;
+  }
+};
+
+module.exports = { init, fetch, update };

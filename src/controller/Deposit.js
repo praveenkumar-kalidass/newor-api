@@ -15,7 +15,7 @@ const postV1 = async (request, response) => {
     log.info('Validating deposit request details');
     await depositSchema.postV1.validateAsync(request.body);
     log.info('Deposit request details are valid');
-    const result = await depositService.create(request.body);
+    const result = await depositService.create(log.context, request.body);
     log.info('Successfully completed deposit post v1 api');
     response.status(200).send(result);
   } catch (error) {

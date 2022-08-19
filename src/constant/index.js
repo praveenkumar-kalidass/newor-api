@@ -21,9 +21,14 @@ const REQUEST = {
   AUTHORIZATION_HEADER: 'Authorization',
 };
 
+const ASSET_TYPE = {
+  DEPOSIT: 'DEPOSIT',
+};
+
 module.exports = {
   AUTH_GRANT_TYPE,
   VERIFICATION_MAIL,
   APP,
   REQUEST,
+  ASSET_TYPE,
 };
