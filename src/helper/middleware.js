@@ -1,18 +1,13 @@
 const http = require('http');
 const OAuthServer = require('oauth2-server');
 const jwt = require('jsonwebtoken');
+const opentelemetry = require('@opentelemetry/api');
 
 const { appConfig: config } = require('../../config');
 const constant = require('../constant');
 const neworError = require('../constant/error');
 const oAuth = require('./oauth');
 const tracing = require('./tracing')(constant.APP.SERVICE_NAME);
-
-const traceStatusCode = {
-  200: 1,
-  307: 1,
-  302: 1,
-};
 
 const httpMiddleware = (request, response, next) => {
   tracing.startActiveSpan(request.originalUrl, {
@@ -27,7 +22,7 @@ const httpMiddleware = (request, response, next) => {
     const actualResponse = { end: response.end };
     response.end = (...args) => {
       span.setStatus({
-        code: traceStatusCode[response.statusCode] || 2,
+        code: response.statusCode >= 400 ? 2 : 1,
       });
       span.setAttributes({
         'http.status_code': response.statusCode,
@@ -68,7 +63,7 @@ const requestResponseMiddleware = (request, response, next) => {
         responseLog = Buffer.concat(chunks).toString('utf8');
       }
       span.setStatus({
-        code: traceStatusCode[response.statusCode] || 2,
+        code: response.statusCode >= 400 ? 2 : 1,
       });
       span.addEvent('Response', { response: responseLog });
       span.end();
@@ -79,47 +74,32 @@ const requestResponseMiddleware = (request, response, next) => {
 };
 
 const authMiddleware = async (request, response, next) => {
-  tracing.startActiveSpan(`${request.originalUrl} | authentication`, {
-    kind: 1,
-  }, async (span) => {
-    const actualResponse = { end: response.end };
-    response.end = (...args) => {
-      span.end();
-      return actualResponse.end.apply(response, args);
-    };
-    try {
-      span.addEvent('Initiation check for authentication and identification');
-      const idToken = request.get(constant.REQUEST.IDENTIFICATION_HEADER);
-      if (!idToken) {
-        span.addEvent('No identification!');
-        throw neworError.UNIDENTIFIED;
-      }
-      const isVerified = jwt.verify(idToken, config.idTokenSecret);
-      if (!isVerified) {
-        span.addEvent('Identification verification failed!');
-        throw neworError.UNAUTHENTICATED;
-      }
-      span.addEvent('Identification success!');
-      const { email, mobileNumber } = jwt.decode(idToken, config.idTokenSecret);
-      span.setAttributes({
-        'user.email': email,
-        'user.mobileNumber': mobileNumber,
-      });
-      const oauthRequest = new OAuthServer.Request(request);
-      const oauthResponse = new OAuthServer.Response(request);
-      await oAuth.authenticate(oauthRequest, oauthResponse, {});
-      span.addEvent('Authentication success!');
-      next();
-    } catch (error) {
-      if (neworError.isNeworError(error)) {
-        span.addEvent(`Failure at Authentication!. Error: ${JSON.stringify(error)}`);
-        response.status(error.status).send(error.data);
-        return;
-      }
-      span.addEvent(`Failure at Authentication!. Error: ${error}`);
-      response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
+  const span = opentelemetry.trace.getSpan(opentelemetry.context.active());
+  try {
+    const idToken = request.get(constant.REQUEST.IDENTIFICATION_HEADER);
+    if (!idToken) {
+      throw neworError.UNIDENTIFIED;
     }
-  });
+    const isVerified = jwt.verify(idToken, config.idTokenSecret);
+    if (!isVerified) {
+      throw neworError.UNAUTHENTICATED;
+    }
+    const { email, mobileNumber } = jwt.decode(idToken, config.idTokenSecret);
+    span.setAttributes({
+      'user.email': email,
+      'user.mobileNumber': mobileNumber,
+    });
+    const oauthRequest = new OAuthServer.Request(request);
+    const oauthResponse = new OAuthServer.Response(request);
+    await oAuth.authenticate(oauthRequest, oauthResponse, {});
+    next();
+  } catch (error) {
+    if (neworError.isNeworError(error)) {
+      response.status(error.status).send(error.data);
+      return;
+    }
+    response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
+  }
 };
 
 module.exports = { httpMiddleware, requestResponseMiddleware, authMiddleware };
