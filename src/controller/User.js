@@ -4,6 +4,7 @@ const OAuthServer = require('oauth2-server');
 const userSchema = require('../schema/User');
 const userService = require('../service/User');
 const authTokenService = require('../service/AuthToken');
+const worthService = require('../service/Worth');
 const neworError = require('../constant/error');
 const oAuth = require('../helper/oauth');
 const logger = require('../helper/logger');
@@ -214,6 +215,25 @@ const pictureV1 = async (request, response) => {
   }
 };
 
+const worthV1 = async (request, response) => {
+  const log = await logger.init(null, request.originalUrl, {
+    class: 'user_controller',
+    method: 'worthV1',
+  });
+  try {
+    log.info('Initiating user worth v1 api');
+    const { id } = await token.getUser(request);
+    const result = await worthService.calculate(log.context, id);
+    log.info('Successfully completed user worth v1 api.');
+    response.status(200).send(result);
+  } catch (error) {
+    log.error(`Error while getting net-worth for user. Error: ${JSON.stringify(error)}`);
+    response.status(error.status).send(error.data);
+  } finally {
+    log.end();
+  }
+};
+
 module.exports = {
   signupV1,
   loginV1,
@@ -223,4 +243,5 @@ module.exports = {
   resetPasswordV1,
   logoutV1,
   pictureV1,
+  worthV1,
 };

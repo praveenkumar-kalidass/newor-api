@@ -3,6 +3,7 @@ const httpMocks = require('node-mocks-http');
 const neworError = require('../constant/error');
 const userService = require('../service/User');
 const authTokenService = require('../service/AuthToken');
+const worthService = require('../service/Worth');
 const oAuth = require('../helper/oauth');
 const token = require('../helper/token');
 const userController = require('./User');
@@ -20,6 +21,9 @@ jest.mock('../service/AuthToken', () => ({
 }));
 jest.mock('../service/Client', () => ({
   authorize: jest.fn(),
+}));
+jest.mock('../service/Worth', () => ({
+  calculate: jest.fn(),
 }));
 
 describe('User Controller', () => {
@@ -383,6 +387,37 @@ describe('User Controller', () => {
       expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
         code: 'NEWOR_INTERNAL_SERVER_ERROR',
         description: 'Internal Server error',
+      });
+    });
+  });
+
+  describe('worthV1', () => {
+    const requestMock = httpMocks.createRequest({
+      method: 'GET',
+      url: '/api/user/v1/worth',
+    });
+
+    it('should return networth as success response', async () => {
+      token.getUser.mockResolvedValueOnce({ id: 'test_user_id' });
+      worthService.calculate.mockResolvedValueOnce({ value: 123.12 });
+
+      await userController.worthV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(200);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        value: 123.12,
+      });
+    });
+
+    it('should error when service throws error', async () => {
+      token.getUser.mockRejectedValueOnce(neworError.UNIDENTIFIED);
+
+      await userController.worthV1(requestMock, responseMock);
+
+      expect(responseMock.status).toHaveBeenCalledWith(401);
+      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
+        code: 'NEWOR_UNIDENTIFIED',
+        description: 'Identification token not valid.',
       });
     });
   });

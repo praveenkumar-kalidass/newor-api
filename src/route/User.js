@@ -297,4 +297,23 @@ router.delete('/v1/logout', requestResponseMiddleware, authMiddleware, userContr
  */
 router.put('/v1/picture', requestResponseMiddleware, authMiddleware, userController.pictureV1);
 
+/**
+ * @swagger
+ * /api/user/v1/worth:
+ *  get:
+ *    summary: Get net worth
+ *    description: Calculate net-worth of user
+ *    tags:
+ *      - User
+ *    security:
+ *      - bearerAuth: []
+ *      - idAuth: []
+ *    responses:
+ *      200:
+ *        description: Worth calculation success
+ *      500:
+ *        description: Worth calculation failed
+ */
+router.get('/v1/worth', requestResponseMiddleware, authMiddleware, userController.worthV1);
+
 module.exports = router;
