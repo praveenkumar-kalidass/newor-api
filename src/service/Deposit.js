@@ -11,10 +11,7 @@ const create = async (ctxt, deposit) => {
   });
   try {
     log.info('Creating a new deposit for user');
-    const result = await depositDao.save(ctxt, {
-      ...deposit,
-      initial: deposit.value,
-    });
+    const result = await depositDao.save(ctxt, deposit);
     log.info('Getting asset list for user');
     const asset = await assetDao.fetch(ctxt, { id: deposit.assetId });
     if (!asset.list.includes(constant.ASSET_TYPE.DEPOSIT)) {

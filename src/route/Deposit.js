@@ -28,6 +28,9 @@ const router = express.Router();
  *              interestRate:
  *                type: number
  *                format: float
+ *              initial:
+ *                type: number
+ *                format: float
  *              value:
  *                type: number
  *                format: float
@@ -45,6 +48,7 @@ const router = express.Router();
  *            required:
  *              - type
  *              - interestRate
+ *              - initial
  *              - value
  *              - depositoryName
  *              - startedAt
