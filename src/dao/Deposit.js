@@ -2,7 +2,7 @@ const model = require('../model');
 const logger = require('../helper/logger');
 
 const save = async (ctxt, deposit) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'deposit_dao',
     method: 'save',
   });

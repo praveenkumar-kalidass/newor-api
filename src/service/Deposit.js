@@ -5,7 +5,7 @@ const constant = require('../constant');
 const logger = require('../helper/logger');
 
 const create = async (ctxt, deposit) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'client_service',
     method: 'authorize',
   });

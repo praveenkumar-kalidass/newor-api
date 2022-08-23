@@ -11,46 +11,41 @@ const logger = winston.createLogger({
 });
 
 function info(message) {
-  const span = opentelemetry.trace.getSpan(this.context);
+  const span = this.context;
   const { traceId, spanId } = span.spanContext();
   logger.info(message, { ...this.tags, traceId, spanId });
   span.addEvent('info', { ...this.tags, message });
 }
 
 function error(message) {
-  const span = opentelemetry.trace.getSpan(this.context);
+  const span = this.context;
   const { traceId, spanId } = span.spanContext();
   logger.error(message, { ...this.tags, traceId, spanId });
   span.addEvent('error', { ...this.tags, message });
 }
 
 function end() {
-  const span = opentelemetry.trace.getSpan(this.context);
-  span.end();
+  this.context.end();
 }
 
-const init = (ctxt, url, tags) => (
-  new Promise((resolve) => {
-    if (!ctxt) {
-      tracing.startActiveSpan(`${url} | log`, () => {
-        resolve({
-          context: opentelemetry.context.active(),
-          tags,
-          info,
-          error,
-          end,
-        });
-      });
-      return;
-    }
-    resolve({
-      context: ctxt,
+const init = (ctxt, url, tags) => {
+  if (!ctxt) {
+    const span = tracing.startSpan(`${url} | log`, { kind: 1 }, opentelemetry.context.active());
+    return {
+      context: span,
       tags,
       info,
       error,
       end,
-    });
-  })
-);
+    };
+  }
+  return {
+    context: ctxt,
+    tags,
+    info,
+    error,
+    end,
+  };
+};
 
 module.exports = { init };

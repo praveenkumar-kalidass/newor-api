@@ -6,13 +6,13 @@ const constant = require('../constant');
 const logger = require('../helper/logger');
 
 const authorize = async (ctxt, client) => {
-  const log = await logger.init(ctxt, 'oauth2-server', {
+  const log = logger.init(ctxt, null, {
     class: 'client_service',
     method: 'authorize',
   });
   try {
     log.info('Initiating authorize client.');
-    const result = await clientDao.fetchBy(log.context, client.id);
+    const result = await clientDao.fetchBy(ctxt, client.id);
     if (!result) {
       log.info(`No client found with id: ${client.id}`);
       throw neworError.CLIENT_NOT_FOUND;
@@ -39,10 +39,6 @@ const authorize = async (ctxt, client) => {
     }
     log.error(`Error while authorize client. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
-  } finally {
-    if (!ctxt) {
-      log.end();
-    }
   }
 };
 

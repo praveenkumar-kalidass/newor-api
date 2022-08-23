@@ -2,7 +2,7 @@ const model = require('../model');
 const logger = require('../helper/logger');
 
 const save = async (ctxt, token) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'auth_token_dao',
     method: 'save',
   });
@@ -18,7 +18,7 @@ const save = async (ctxt, token) => {
 };
 
 const fetch = async (ctxt, by) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'auth_token_dao',
     method: 'save',
   });
@@ -46,7 +46,7 @@ const fetch = async (ctxt, by) => {
 };
 
 const revoke = async (ctxt, by) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'auth_token_dao',
     method: 'revoke',
   });

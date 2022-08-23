@@ -6,7 +6,7 @@ const depositService = require('../service/Deposit');
 const logger = require('../helper/logger');
 
 const postV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'deposit_controller',
     method: 'postV1',
   });

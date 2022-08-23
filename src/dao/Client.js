@@ -2,7 +2,7 @@ const model = require('../model');
 const logger = require('../helper/logger');
 
 const fetchBy = async (ctxt, id) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'client_dao',
     method: 'fetchBy',
   });

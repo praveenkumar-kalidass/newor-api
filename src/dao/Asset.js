@@ -2,7 +2,7 @@ const model = require('../model');
 const logger = require('../helper/logger');
 
 const init = async (ctxt, asset) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'asset_dao',
     method: 'init',
   });
@@ -18,7 +18,7 @@ const init = async (ctxt, asset) => {
 };
 
 const fetch = async (ctxt, by) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'asset_dao',
     method: 'fetch',
   });
@@ -36,7 +36,7 @@ const fetch = async (ctxt, by) => {
 };
 
 const update = async (ctxt, by, asset) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'asset_dao',
     method: 'update',
   });

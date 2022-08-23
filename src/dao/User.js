@@ -2,7 +2,7 @@ const model = require('../model');
 const logger = require('../helper/logger');
 
 const save = async (ctxt, user) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_dao',
     method: 'save',
   });
@@ -19,7 +19,7 @@ const save = async (ctxt, user) => {
 };
 
 const fetch = async (ctxt, by) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_dao',
     method: 'fetch',
   });
@@ -36,7 +36,7 @@ const fetch = async (ctxt, by) => {
 };
 
 const update = async (ctxt, by, user) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_dao',
     method: 'update',
   });

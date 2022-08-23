@@ -3,7 +3,7 @@ const liabilityDao = require('../dao/Liability');
 const logger = require('../helper/logger');
 
 const calculate = async (ctxt, userId) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'liability_service',
     method: 'calculate',
   });

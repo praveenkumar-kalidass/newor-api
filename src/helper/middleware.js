@@ -36,54 +36,57 @@ const httpMiddleware = (request, response, next) => {
 };
 
 const requestResponseMiddleware = (request, response, next) => {
-  tracing.startActiveSpan(`${request.originalUrl} | request/response`, {
+  const span = tracing.startSpan(`${request.originalUrl} | request/response`, {
     kind: 1,
     attributes: {
       method: request.method,
     },
-  }, (span) => {
-    const requestLog = request.method !== 'GET' ? request.body : request.params;
-    span.addEvent('Request', { request: JSON.stringify(requestLog) });
+    root: false,
+  }, opentelemetry.context.active());
+  const requestLog = request.method !== 'GET' ? request.body : request.params;
+  span.addEvent('Request', { request: JSON.stringify(requestLog) });
 
-    const actualResponse = { write: response.write, end: response.end };
-    const chunks = [];
+  const actualResponse = { write: response.write, end: response.end };
+  const chunks = [];
 
-    response.write = (chunk, ...args) => {
-      if (typeof chunk !== 'string') {
+  response.write = (chunk, ...args) => {
+    if (typeof chunk !== 'string') {
+      chunks.push(chunk);
+    }
+    return actualResponse.write.apply(response, args);
+  };
+  response.end = (chunk, ...args) => {
+    let responseLog = chunk;
+    if (typeof chunk !== 'string') {
+      if (chunk) {
         chunks.push(chunk);
       }
-      return actualResponse.write.apply(response, args);
-    };
-    response.end = (chunk, ...args) => {
-      let responseLog = chunk;
-      if (typeof chunk !== 'string') {
-        if (chunk) {
-          chunks.push(chunk);
-        }
-        responseLog = Buffer.concat(chunks).toString('utf8');
-      }
-      span.setStatus({
-        code: response.statusCode >= 400 ? 2 : 1,
-      });
-      span.addEvent('Response', { response: responseLog });
-      span.end();
-      return actualResponse.end.apply(response, [chunk, ...args]);
-    };
-    next();
-  });
+      responseLog = Buffer.concat(chunks).toString('utf8');
+    }
+    span.setStatus({
+      code: response.statusCode >= 400 ? 2 : 1,
+    });
+    span.addEvent('Response', { response: responseLog });
+    span.end();
+    return actualResponse.end.apply(response, [chunk, ...args]);
+  };
+  next();
 };
 
 const authMiddleware = async (request, response, next) => {
-  const span = opentelemetry.trace.getSpan(opentelemetry.context.active());
+  const span = tracing.startSpan(`${request.originalUrl} | auth`, { kind: 1 }, opentelemetry.context.active());
   try {
     const idToken = request.get(constant.REQUEST.IDENTIFICATION_HEADER);
     if (!idToken) {
+      span.addEvent('Identification not found!');
       throw neworError.UNIDENTIFIED;
     }
     const isVerified = jwt.verify(idToken, config.idTokenSecret);
     if (!isVerified) {
+      span.addEvent('Identification not valid!');
       throw neworError.UNAUTHENTICATED;
     }
+    span.addEvent('Identification Success!');
     const { email, mobileNumber } = jwt.decode(idToken, config.idTokenSecret);
     span.setAttributes({
       'user.email': email,
@@ -92,13 +95,17 @@ const authMiddleware = async (request, response, next) => {
     const oauthRequest = new OAuthServer.Request(request);
     const oauthResponse = new OAuthServer.Response(request);
     await oAuth.authenticate(oauthRequest, oauthResponse, {});
+    span.addEvent('Authentication Success!');
     next();
   } catch (error) {
     if (neworError.isNeworError(error)) {
       response.status(error.status).send(error.data);
       return;
     }
+    span.addEvent('Authentication failed!');
     response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
+  } finally {
+    span.end();
   }
 };
 

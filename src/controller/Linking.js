@@ -4,7 +4,7 @@ const constant = require('../constant');
 const logger = require('../helper/logger');
 
 const linkingV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'linking_controller',
     method: 'linkingV1',
   });

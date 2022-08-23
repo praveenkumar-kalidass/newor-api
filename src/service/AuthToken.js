@@ -8,13 +8,13 @@ const aws = require('../helper/aws');
 const { getImageUri } = require('../helper/util');
 
 const persist = async (ctxt, token, client, user) => {
-  const log = await logger.init(ctxt, 'oauth2-server', {
+  const log = logger.init(ctxt, null, {
     class: 'auth_token_service',
     method: 'persist',
   });
   try {
     log.info('Persisting auth token with client and user data');
-    const authToken = await authTokenDao.save(log.context, {
+    const authToken = await authTokenDao.save(ctxt, {
       ...token,
       clientId: client.id,
       userId: user.id,
@@ -28,21 +28,17 @@ const persist = async (ctxt, token, client, user) => {
   } catch (error) {
     log.error(`Error while persisting auth token. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
-  } finally {
-    if (!ctxt) {
-      log.end();
-    }
   }
 };
 
 const findByType = async (ctxt, tokenType, token) => {
-  const log = await logger.init(ctxt, 'oauth2-server', {
+  const log = logger.init(ctxt, null, {
     class: 'auth_token_service',
     method: 'persist',
   });
   try {
     log.info(`Getting user token based on authentication token type: ${tokenType}`);
-    const result = await authTokenDao.fetch(log.context, { [tokenType]: token });
+    const result = await authTokenDao.fetch(ctxt, { [tokenType]: token });
     if (!result) {
       log.info('Authentication Token not found.');
       throw neworError.UNAUTHENTICATED;
@@ -69,21 +65,17 @@ const findByType = async (ctxt, tokenType, token) => {
   } catch (error) {
     log.error(`Error while finding auth token. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
-  } finally {
-    if (!ctxt) {
-      log.end();
-    }
   }
 };
 
 const remove = async (ctxt, accessToken, userId) => {
-  const log = await logger.init(ctxt, 'oauth2-server', {
+  const log = logger.init(ctxt, null, {
     class: 'auth_token_service',
     method: 'remove',
   });
   try {
     log.info(`Deleting access token for user with id ${userId}`);
-    const result = await authTokenDao.revoke(log.context, {
+    const result = await authTokenDao.revoke(ctxt, {
       accessToken,
       userId,
     });
@@ -96,10 +88,6 @@ const remove = async (ctxt, accessToken, userId) => {
   } catch (error) {
     log.error(`Error while removing auth token. Error: ${error}`);
     throw neworError.INTERNAL_SERVER_ERROR;
-  } finally {
-    if (!ctxt) {
-      log.end();
-    }
   }
 };
 

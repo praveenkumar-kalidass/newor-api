@@ -2,7 +2,7 @@ const model = require('../model');
 const logger = require('../helper/logger');
 
 const init = async (ctxt, liability) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'liability_dao',
     method: 'init',
   });
@@ -18,7 +18,7 @@ const init = async (ctxt, liability) => {
 };
 
 const fetch = async (ctxt, by) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'liability_dao',
     method: 'fetch',
   });

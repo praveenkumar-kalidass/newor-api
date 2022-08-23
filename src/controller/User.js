@@ -11,7 +11,7 @@ const logger = require('../helper/logger');
 const token = require('../helper/token');
 
 const signupV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'signupV1',
   });
@@ -36,7 +36,7 @@ const signupV1 = async (request, response) => {
 };
 
 const loginV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'loginV1',
   });
@@ -70,7 +70,7 @@ const loginV1 = async (request, response) => {
 };
 
 const authorizeV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'authorizeV1',
   });
@@ -90,7 +90,7 @@ const authorizeV1 = async (request, response) => {
 };
 
 const verifyV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'verifyV1',
   });
@@ -115,7 +115,7 @@ const verifyV1 = async (request, response) => {
 };
 
 const forgotPasswordV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'forgotPasswordV1',
   });
@@ -140,7 +140,7 @@ const forgotPasswordV1 = async (request, response) => {
 };
 
 const resetPasswordV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'resetPasswordV1',
   });
@@ -165,7 +165,7 @@ const resetPasswordV1 = async (request, response) => {
 };
 
 const logoutV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'logoutV1',
   });
@@ -185,7 +185,7 @@ const logoutV1 = async (request, response) => {
 };
 
 const pictureV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'pictureV1',
   });
@@ -216,7 +216,7 @@ const pictureV1 = async (request, response) => {
 };
 
 const worthV1 = async (request, response) => {
-  const log = await logger.init(null, request.originalUrl, {
+  const log = logger.init(null, request.originalUrl, {
     class: 'user_controller',
     method: 'worthV1',
   });

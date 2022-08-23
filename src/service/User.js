@@ -13,7 +13,7 @@ const logger = require('../helper/logger');
 const { getImageUri } = require('../helper/util');
 
 const signup = async (ctxt, user) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_service',
     method: 'signup',
   });
@@ -48,13 +48,13 @@ const signup = async (ctxt, user) => {
 };
 
 const login = async (ctxt, user) => {
-  const log = await logger.init(ctxt, 'oauth2-server', {
+  const log = logger.init(ctxt, null, {
     class: 'user_service',
     method: 'login',
   });
   try {
     log.info('Initiating login user.');
-    const result = await userDao.fetch(log.context, { email: user.email });
+    const result = await userDao.fetch(ctxt, { email: user.email });
     if (!result) {
       log.info(`No user found with email: ${user.email}`);
       throw neworError.USER_NOT_FOUND;
@@ -88,15 +88,11 @@ const login = async (ctxt, user) => {
     }
     log.error('Error while login user. Error: ', error);
     throw neworError.INTERNAL_SERVER_ERROR;
-  } finally {
-    if (!ctxt) {
-      log.end();
-    }
   }
 };
 
 const verify = async (ctxt, token) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_service',
     method: 'login',
   });
@@ -126,7 +122,7 @@ const verify = async (ctxt, token) => {
 };
 
 const forgotPassword = async (ctxt, email) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_service',
     method: 'forgotPassword',
   });
@@ -164,7 +160,7 @@ const forgotPassword = async (ctxt, email) => {
 };
 
 const resetPassword = async (ctxt, data) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_service',
     method: 'resetPassword',
   });
@@ -191,7 +187,7 @@ const resetPassword = async (ctxt, data) => {
 };
 
 const updatePicture = async (ctxt, file, userId) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'user_service',
     method: 'uploadPicture',
   });

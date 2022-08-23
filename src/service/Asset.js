@@ -3,7 +3,7 @@ const assetDao = require('../dao/Asset');
 const logger = require('../helper/logger');
 
 const calculate = async (ctxt, userId) => {
-  const log = await logger.init(ctxt, null, {
+  const log = logger.init(ctxt, null, {
     class: 'asset_service',
     method: 'calculate',
   });
