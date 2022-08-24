@@ -17,4 +17,24 @@ const save = async (ctxt, deposit) => {
   }
 };
 
-module.exports = { save };
+const getAll = async (ctxt, by, attributes) => {
+  const log = logger.init(ctxt, null, {
+    class: 'deposit_dao',
+    method: 'getAll',
+  });
+  try {
+    log.info('Getting all deposits from database');
+    const result = await model.Deposit.findAll({
+      where: by,
+      attributes,
+      order: [['created_at', 'DESC']],
+    });
+    log.info(`Successfully got #${result.length} deposits from database`);
+    return result.map((deposit) => deposit.dataValues);
+  } catch (error) {
+    log.error(`Error while getting deposits from database. Error: ${error}`);
+    throw error;
+  }
+};
+
+module.exports = { save, getAll };

@@ -8,7 +8,7 @@ jest.mock('../service/Deposit', () => ({
   create: jest.fn(),
 }));
 
-describe('Linking controller', () => {
+describe('Deposit controller', () => {
   const responseMock = {
     status: jest.fn(() => ({ send: jest.fn() })),
   };

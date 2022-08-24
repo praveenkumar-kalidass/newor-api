@@ -6,8 +6,8 @@ const logger = require('../helper/logger');
 
 const create = async (ctxt, deposit) => {
   const log = logger.init(ctxt, null, {
-    class: 'client_service',
-    method: 'authorize',
+    class: 'deposit_service',
+    method: 'create',
   });
   try {
     log.info('Creating a new deposit for user');
