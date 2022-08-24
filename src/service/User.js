@@ -1,5 +1,6 @@
 const passwordHash = require('password-hash');
 const jwt = require('jsonwebtoken');
+const sharp = require('sharp');
 
 const { appConfig: config } = require('../../config');
 const userDao = require('../dao/User');
@@ -72,7 +73,7 @@ const login = async (ctxt, user) => {
           bucket: config.userPictureBucket,
           key: result.picture,
         });
-        picture = getImageUri(body, result.picture);
+        picture = getImageUri(body);
       }
       return {
         ...result,
@@ -193,16 +194,13 @@ const updatePicture = async (ctxt, file, userId) => {
   });
   try {
     log.info('Initiating update user picture');
-    const extension = {
-      'image/png': '.png',
-      'image/jpeg': '.jpeg',
-    };
-    const fileName = `${userId}${extension[file.mimetype]}`;
+    const fileName = `${userId}.png`;
+    const compressed = await sharp(file.data).resize(200).png().toBuffer();
     log.info(`Uploading file ${fileName} to s3 bucket`);
     await aws.uploadFile({
       bucket: config.userPictureBucket,
       key: fileName,
-      body: file.data,
+      body: compressed,
     });
     log.info(`file ${fileName} uploaded successfully to s3 bucket`);
     await userDao.update(ctxt, {
@@ -216,7 +214,7 @@ const updatePicture = async (ctxt, file, userId) => {
       key: fileName,
     });
     return {
-      picture: getImageUri(body, fileName),
+      picture: getImageUri(body),
     };
   } catch (error) {
     log.error(`Error while updating picture for user. Error: ${error}`);

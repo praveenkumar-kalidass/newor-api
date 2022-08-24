@@ -56,6 +56,13 @@ const errors = {
       description: 'Identification token not valid.',
     },
   },
+  FILE_SIZE_EXCEEDED: {
+    status: 400,
+    data: {
+      code: 'NEWOR_FILE_SIZE_EXCEEDED',
+      description: 'Uploaded file size exceeded.',
+    },
+  },
 };
 
 module.exports = errors;

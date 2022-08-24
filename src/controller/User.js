@@ -197,6 +197,9 @@ const pictureV1 = async (request, response) => {
     await userSchema.pictureV1.validateAsync({
       picture: request.files.picture.mimetype,
     });
+    if (Buffer.byteLength(request.files.picture.data) > 5000000) {
+      throw neworError.FILE_SIZE_EXCEEDED;
+    }
     const { id } = await token.getUser(request);
     const result = await userService.updatePicture(log.context, request.files.picture, id);
     response.status(200).send(result);

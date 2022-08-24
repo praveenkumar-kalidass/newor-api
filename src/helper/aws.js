@@ -38,6 +38,7 @@ const uploadFile = ({
   Bucket: bucket,
   Key: key,
   Body: body,
+  ContentLength: Buffer.byteLength(body),
 }).promise();
 
 const getFile = ({

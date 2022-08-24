@@ -10,6 +10,9 @@ jest.mock('jsonwebtoken', () => ({
   verify: jest.fn(),
   decode: jest.fn(),
 }));
+jest.mock('sharp', () => () => ({
+  resize: () => ({ png: () => ({ toBuffer: jest.fn() }) }),
+}));
 jest.mock('../dao/User', () => ({
   save: jest.fn(),
   fetch: jest.fn(),
