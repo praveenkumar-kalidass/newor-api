@@ -102,7 +102,7 @@ const authMiddleware = async (request, response, next) => {
       response.status(error.status).send(error.data);
       return;
     }
-    span.addEvent('Authentication failed!');
+    span.addEvent(`Authentication failed!. Error: ${error}`);
     response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
   } finally {
     span.end();

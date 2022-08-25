@@ -163,21 +163,13 @@ describe('User Controller', () => {
     });
 
     it('should return error when authorization failed', async () => {
-      oAuth.token.mockRejectedValueOnce({
-        status: 500,
-        data: {
-          code: 'NEWOR_INTERNAL_SERVER_ERROR',
-          description: 'Internal Server error',
-        },
-      });
+      oAuth.token.mockRejectedValueOnce({});
 
       await userController.authorizeV1(requestMock, responseMock);
 
-      expect(responseMock.status).toHaveBeenCalledWith(500);
-      expect(responseMock.status.mock.results[0].value.send).toHaveBeenCalledWith({
-        code: 'NEWOR_INTERNAL_SERVER_ERROR',
-        description: 'Internal Server error',
-      });
+      expect(responseMock.status).toHaveBeenCalledWith(401);
+      expect(responseMock.status.mock.results[0].value.send)
+        .toHaveBeenCalledWith(neworError.UNAUTHENTICATED.data);
     });
   });
 

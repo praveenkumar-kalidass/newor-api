@@ -83,7 +83,7 @@ const authorizeV1 = async (request, response) => {
     response.status(200).send(result);
   } catch (error) {
     log.error(`Error while authorize for user. Error: ${error}`);
-    response.status(error.status).send(error.data);
+    response.status(neworError.UNAUTHENTICATED.status).send(neworError.UNAUTHENTICATED.data);
   } finally {
     log.end();
   }
