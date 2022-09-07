@@ -25,10 +25,15 @@ const ASSET_TYPE = {
   DEPOSIT: 'DEPOSIT',
 };
 
+const LIABILITY_TYPE = {
+  LOAN: 'LOAN',
+};
+
 module.exports = {
   AUTH_GRANT_TYPE,
   VERIFICATION_MAIL,
   APP,
   REQUEST,
   ASSET_TYPE,
+  LIABILITY_TYPE,
 };

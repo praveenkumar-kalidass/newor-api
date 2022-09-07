@@ -12,7 +12,7 @@ const calculate = async (ctxt, userId) => {
     log.info('Initiating calculation of net-worth');
     log.info('Getting liablility and asset details of user');
     const [liability, asset] = await Promise.all([
-      liabilityService.calculate(ctxt, userId),
+      liabilityService.calculate(ctxt, { userId }),
       assetService.calculate(ctxt, { userId }),
     ]);
     log.info('Successfully got liablility and asset details of user');
