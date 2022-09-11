@@ -1,6 +1,22 @@
 const model = require('../model');
 const logger = require('../helper/logger');
 
+const save = async (ctxt, loan) => {
+  const log = logger.init(ctxt, null, {
+    class: 'loan_dao',
+    method: 'save',
+  });
+  try {
+    log.info('Saving loan in database');
+    const result = await model.Loan.create(loan);
+    log.info('Successfully saved loan in database');
+    return result.dataValues;
+  } catch (error) {
+    log.error(`Error while saving loan in database. Error: ${error}`);
+    throw error;
+  }
+};
+
 const getAll = async (ctxt, by, attributes) => {
   const log = logger.init(ctxt, null, {
     class: 'loan_dao',
@@ -21,4 +37,4 @@ const getAll = async (ctxt, by, attributes) => {
   }
 };
 
-module.exports = { getAll };
+module.exports = { save, getAll };

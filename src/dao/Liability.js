@@ -35,4 +35,21 @@ const fetch = async (ctxt, by) => {
   }
 };
 
-module.exports = { init, fetch };
+const update = async (ctxt, by, liability) => {
+  const log = logger.init(ctxt, null, {
+    class: 'liability_dao',
+    method: 'update',
+  });
+  try {
+    log.info('Updating liability in database');
+    const result = await model.Liability.update(liability, { where: by });
+    if (!result) return result;
+    log.info('Successfully updated liability in database');
+    return result.dataValues;
+  } catch (error) {
+    log.error(`Error while updating liability in database. Error: ${error}`);
+    throw error;
+  }
+};
+
+module.exports = { init, fetch, update };
