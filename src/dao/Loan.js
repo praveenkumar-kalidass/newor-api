@@ -1,5 +1,6 @@
 const model = require('../model');
 const logger = require('../helper/logger');
+const constant = require('../constant');
 
 const save = async (ctxt, loan) => {
   const log = logger.init(ctxt, null, {
@@ -30,7 +31,10 @@ const getAll = async (ctxt, by, attributes) => {
       order: [['created_at', 'DESC']],
     });
     log.info(`Successfully got #${result.length} loans from database`);
-    return result.map((loan) => loan.dataValues);
+    return result.map((loan) => ({
+      ...loan.dataValues,
+      liabilityType: constant.LIABILITY_TYPE.LOAN,
+    }));
   } catch (error) {
     log.error(`Error while getting loans from database. Error: ${error}`);
     throw error;
